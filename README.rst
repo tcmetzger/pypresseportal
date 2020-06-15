@@ -23,32 +23,32 @@ Next, you can request data from the API. Currently, those three request methods 
 1. Use the method `get_stories()` to access stories without any further restrictions (https://api.presseportal.de/doc/article/all).
 If no arguments are provided, PyPresseportal defaults to retrieving the 50 most recent stories available. For example:
 
-    >>> from pypresseportal import PresseportalApi
-    >>> api_object = PresseportalApi(YOUR_API_KEY)
-    >>> stories = api_object.get_stories()
+>>> from pypresseportal import PresseportalApi
+>>> api_object = PresseportalApi(YOUR_API_KEY)
+>>> stories = api_object.get_stories()
 
 Story data can be accessed through the individual Story object's attributes. For example:
 
-    >>> stories[0].title
-    "Kohls Wohnhaus hat keinen Denkmalwert"
-    >>> stories[0].id
-    "4622388"
+>>> stories[0].title
+"Kohls Wohnhaus hat keinen Denkmalwert"
+>>> stories[0].id
+"4622388"
 
 2. The method `get_public_service_news()` to retrieve press releases from
 police and fire departments as well as other public service offices (https://api.presseportal.de/doc/article/publicservice).
 If no arguments are provided, PyPresseportal defaults to retrieving the 50 most recent public service stories available. 
 For example:
 
-    >>> from pypresseportal import PresseportalApi
-    >>> api_object = PresseportalApi(YOUR_API_KEY)
-    >>> public_service_stories = api_object.get_public_service_news()
+>>> from pypresseportal import PresseportalApi
+>>> api_object = PresseportalApi(YOUR_API_KEY)
+>>> public_service_stories = api_object.get_public_service_news()
 
 Story data can be accessed through the individual Story object's attributes. For example:
 
-    >>> public_service_stories[0].title
-    "POL-HAM: Ergebnisse von Geschwindigkeitskontrollen"
-    >>> public_service_stories[0].id
-    "1512510"
+>>> public_service_stories[0].title
+"POL-HAM: Ergebnisse von Geschwindigkeitskontrollen"
+>>> public_service_stories[0].id
+"1512510"
 
 3. The method `get_public_service_specific_region()` to retrieve press releases
 from police and fire departments as well as other public service offices in
@@ -57,14 +57,14 @@ You need to specify a state as an argument. If no other arguments are provided, 
 defaults to retrieving the 50 most recent public service stories available for this state. 
 For example:
 
-    >>> from pypresseportal import PresseportalApi
-    >>> api_object = PresseportalApi(YOUR_API_KEY)
-    >>> region_stories = api_object.get_public_service_specific_region(region="sh")
+>>> from pypresseportal import PresseportalApi
+>>> api_object = PresseportalApi(YOUR_API_KEY)
+>>> region_stories = api_object.get_public_service_specific_region(region="sh")
 
 Story data can be accessed through the individual Story object's attributes. For example:
 
-    >>> region_stories[0].title
-    "POL-RZ: Ammersbek - Mofa mit drei betrunkenen Personen besetzt"
-    >>> region_stories[0].id
-    "1512631"
+>>> region_stories[0].title
+"POL-RZ: Ammersbek - Mofa mit drei betrunkenen Personen besetzt"
+>>> region_stories[0].id
+"1512631"
 
