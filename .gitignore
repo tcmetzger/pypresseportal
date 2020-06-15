@@ -4,6 +4,10 @@
 Pip*
 test/
 
+# Tests
+.coverage
+.pytype
+
 # Sphinx
 docs/_build
 
