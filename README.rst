@@ -27,7 +27,7 @@ If no arguments are provided, PyPresseportal defaults to retrieving the 50 most 
 >>> api_object = PresseportalApi(YOUR_API_KEY)
 >>> stories = api_object.get_stories()
 
-Story data can be accessed through the individual Story object's attributes. For example:
+`get_stories()` returns a list of Story objects. Story data can be accessed through the individual Story object's attributes. For example:
 
 >>> stories[0].title
 "Kohls Wohnhaus hat keinen Denkmalwert"
@@ -43,7 +43,7 @@ For example:
 >>> api_object = PresseportalApi(YOUR_API_KEY)
 >>> public_service_stories = api_object.get_public_service_news()
 
-Story data can be accessed through the individual Story object's attributes. For example:
+`get_public_service_news()` returns a list of Story objects. Story data can be accessed through the individual Story object's attributes. For example:
 
 >>> public_service_stories[0].title
 "POL-HAM: Ergebnisse von Geschwindigkeitskontrollen"
@@ -61,7 +61,7 @@ For example:
 >>> api_object = PresseportalApi(YOUR_API_KEY)
 >>> region_stories = api_object.get_public_service_specific_region(region="sh")
 
-Story data can be accessed through the individual Story object's attributes. For example:
+`get_public_service_specific_region()` returns a list of Story objects. Story data can be accessed through the individual Story object's attributes. For example:
 
 >>> region_stories[0].title
 "POL-RZ: Ammersbek - Mofa mit drei betrunkenen Personen besetzt"
