@@ -34,7 +34,7 @@ If no arguments are provided, PyPresseportal defaults to retrieving the 50 most 
 >>> stories[0].id
 "4622388"
 
-2. The method `get_public_service_news()` to retrieve press releases from
+2. Use the method `get_public_service_news()` to retrieve press releases from
 police and fire departments as well as other public service offices (https://api.presseportal.de/doc/article/publicservice).
 If no arguments are provided, PyPresseportal defaults to retrieving the 50 most recent public service stories available. 
 For example:
@@ -50,12 +50,12 @@ For example:
 >>> public_service_stories[0].id
 "1512510"
 
-3. The method `get_public_service_specific_region()` to retrieve press releases
+3. Use the method `get_public_service_specific_region()` to retrieve press releases
 from police and fire departments as well as other public service offices in
 a specific state in Germany (https://api.presseportal.de/doc/article/publicservice/region).
-You need to specify a state as an argument. If no other arguments are provided, PyPresseportal 
-defaults to retrieving the 50 most recent public service stories available for this state. 
-For example:
+You need to specify a region code as an argument (list of region codes: https://api.presseportal.de/doc/value/region). 
+If no other arguments are provided, PyPresseportal defaults to retrieving the 50 most recent 
+public service stories available for this state. For example:
 
 >>> from pypresseportal import PresseportalApi
 >>> api_object = PresseportalApi(YOUR_API_KEY)
