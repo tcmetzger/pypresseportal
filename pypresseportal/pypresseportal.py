@@ -5,9 +5,6 @@ PyPresseportal makes data from the presseportal.de API
  presseportal.de to use PyPresseportal.
 """
 
-# Python packaging structure: https://python-packaging.readthedocs.io/en/latest/minimal.html
-# https://api.presseportal.de/api/ir/all?api_key=2ef729c1bdc147e54fa42cf27f451c20&format=json
-
 import json
 
 from datetime import datetime
@@ -65,7 +62,7 @@ class Story:
             if "ressort" in data.keys():
                 self.ressort = data["ressort"]
 
-            # TBD: "Extended" info: https://api.presseportal.de/doc/format/company?????
+            # TBD: "Extended" info: https://api.presseportal.de/doc/format/company?
             # check whether data contains company or office
             if "company" in data.keys():
                 self.company_id = data["company"]["id"]
@@ -151,7 +148,6 @@ class PresseportalApi:
             raise ApiKeyError(api_key)
         else:
             self.api_key = api_key
-        # https://api.presseportal.de/doc/value/media
         self.available_media_types = ["image", "document", "audio", "video"]
         self.public_office_available_media_types = ["image", "document"]
         self.public_office_available_regions = [
@@ -182,12 +178,13 @@ class PresseportalApi:
         teaser: bool,
     ) -> Tuple[str, Dict[str, str], Dict[str, str]]:
 
-        # Append media type, if required
+        # Set up url ans append media type, if required
         if media != None:
             url = f"{base_url}/{media}"
         else:
             url = base_url
 
+        # Set up params
         params = {
             "api_key": self.api_key,
             "format": self.data_format,
@@ -195,6 +192,8 @@ class PresseportalApi:
             "limit": limit,
             "teaser": int(teaser),
         }
+
+        # Set up headers
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0"
         }
@@ -217,25 +216,25 @@ class PresseportalApi:
         Returns:
             List[Story]: List of Story objects
         """
-        #######################Disabled for testing ##############
+        #######################Disable for testing ##############
         try:
             request = requests.get(url=url, params=params, headers=headers)
             json_data = json.loads(request.text)
-            with open("out.json", "w") as outfile:
-                json.dump(json_data, outfile)
+            # with open("out.json", "w") as outfile:
+            #     json.dump(json_data, outfile)
         except (
             requests.exceptions.ConnectionError,
             requests.exceptions.TooManyRedirects,
             requests.exceptions.Timeout,
         ) as error:
             raise ApiConnectionFail(error)
-        #######################Enabled for testing ###############
+        #######################Enable for testing ###############
         # # read file
         # with open("out.json", "r") as in_file:
         #     data = in_file.read()
         # # parse file
         # json_data = json.loads(data)
-        # ###########################################################
+        #########################################################
 
         # Raise error if API does not report success (ApiError or NotImplementedError)
         if "success" in json_data.keys() and json_data["success"] == "1":
