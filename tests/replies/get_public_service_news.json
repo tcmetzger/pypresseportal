@@ -1,0 +1,48 @@
+{
+    "success": "1",
+    "request": {
+        "uri": "https://api.presseportal.de/api/article/publicservice/image?format=json&amp;start=1&amp;limit=1&amp;teaser=0",
+        "start": "1",
+        "limit": "1",
+        "format": "json",
+        "publicservice": "all",
+        "media": "image"
+    },
+    "content": {
+        "story": [
+            {
+                "id": "1234567",
+                "url": "https://www.presseportal.de/blaulicht/pm/12345/1234567",
+                "title": "POL-TEST: Test message",
+                "body": "Test message body.",
+                "published": "2020-06-15T21:45:52+0200",
+                "office": {
+                    "id": "12345",
+                    "url": "https://www.presseportal.de/blaulicht/nr/112345",
+                    "name": "Polizeipr\u00e4sidium Test"
+                },
+                "keywords": {
+                    "keyword": [
+                        "Polizei",
+                        "Kriminalit\u00e4t"
+                    ]
+                },
+                "media": {
+                    "image": [
+                        {
+                            "id": "123456",
+                            "url": "https://cache.pressmailing.net/thumbnail/story_big/test.JPG",
+                            "name": "test.jpg",
+                            "size": "123456",
+                            "mime": "image/jpeg",
+                            "type": "image",
+                            "caption": "Test caption"
+                        }
+                    ]
+                },
+                "highlight": "0",
+                "short": "http://ots.de/1234567"
+            }
+        ]
+    }
+}
