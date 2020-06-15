@@ -48,7 +48,7 @@ class Story:
             self.url = data["url"]
             self.title = data["title"]
 
-            # check whether data contains body or teaser
+            # Check whether data contains body or teaser
             if "body" in data.keys():
                 self.body = data["body"]
             elif "teaser" in data.keys():
@@ -63,17 +63,19 @@ class Story:
                 self.ressort = data["ressort"]
 
             # TBD: "Extended" info: https://api.presseportal.de/doc/format/company?
-            # check whether data contains company or office
+            # Check whether data contains company or office
             if "company" in data.keys():
                 self.company_id = data["company"]["id"]
                 self.company_url = data["company"]["url"]
                 self.company_name = data["company"]["name"]
             elif "office" in data.keys():
-                self.company_id = data["office"]["id"]
-                self.company_url = data["office"]["url"]
-                self.company_name = data["office"]["name"]
+                self.office_id = data["office"]["id"]
+                self.office_url = data["office"]["url"]
+                self.office_name = data["office"]["name"]
             else:
-                raise ApiDataError("'company' or 'office' not included in response.")
+                raise ApiDataError(
+                    "'company' or 'office' data not included in response."
+                )
 
             # Check if keywords are present, map keywords
             if type(data["keywords"]) == dict and "keyword" in data["keywords"].keys():
@@ -81,7 +83,7 @@ class Story:
                 for keyword in data["keywords"]["keyword"]:
                     self.keywords.append(keyword)
 
-            # TBD: parse media items ()
+            # Map media information as dicts
             if "media" in data.keys() and "image" in data["media"].keys():
                 self.image = data["media"]["image"]
             elif "media" in data.keys() and "audio" in data["media"].keys():
