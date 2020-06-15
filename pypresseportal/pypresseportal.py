@@ -180,7 +180,7 @@ class PresseportalApi:
         teaser: bool,
     ) -> Tuple[str, Dict[str, str], Dict[str, str]]:
 
-        # Set up url ans append media type, if required
+        # Set up url and append media type, if required
         if media != None:
             url = f"{base_url}/{media}"
         else:
@@ -248,9 +248,9 @@ class PresseportalApi:
             ):
                 error_code = json_data["error"]["code"]
                 error_msg = json_data["error"]["msg"]
+                raise ApiError(error_code, error_msg)
             else:
                 raise NotImplementedError
-            raise ApiError(error_code, error_msg)
         else:
             raise NotImplementedError
 
