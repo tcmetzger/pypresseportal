@@ -218,23 +218,23 @@ class PresseportalApi:
             List[Story]: List of Story objects
         """
         #######################Disabled for testing ##############
-        # try:
-        #     request = requests.get(url=url, params=params, headers=headers)
-        #     json_data = json.loads(request.text)
-        #     with open("out.json", "w") as outfile:
-        #         json.dump(json_data, outfile)
-        # except (
-        #     requests.exceptions.ConnectionError,
-        #     requests.exceptions.TooManyRedirects,
-        #     requests.exceptions.Timeout,
-        # ) as error:
-        #     raise ApiConnectionFail(error)
+        try:
+            request = requests.get(url=url, params=params, headers=headers)
+            json_data = json.loads(request.text)
+            with open("out.json", "w") as outfile:
+                json.dump(json_data, outfile)
+        except (
+            requests.exceptions.ConnectionError,
+            requests.exceptions.TooManyRedirects,
+            requests.exceptions.Timeout,
+        ) as error:
+            raise ApiConnectionFail(error)
         #######################Enabled for testing ###############
-        # read file
-        with open("out.json", "r") as in_file:
-            data = in_file.read()
-        # parse file
-        json_data = json.loads(data)
+        # # read file
+        # with open("out.json", "r") as in_file:
+        #     data = in_file.read()
+        # # parse file
+        # json_data = json.loads(data)
         # ###########################################################
 
         # Raise error if API does not report success (ApiError or NotImplementedError)
