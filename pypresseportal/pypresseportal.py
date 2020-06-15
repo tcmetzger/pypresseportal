@@ -178,7 +178,7 @@ class PresseportalApi:
         start: int,
         limit: int,
         teaser: bool,
-    ) -> Tuple[str, Dict[str, str], Dict[str, str]]:
+    ) -> Tuple[str, Dict[str, object], Dict[str, str]]:
 
         # Set up url and append media type, if required
         if media != None:

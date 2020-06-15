@@ -1,6 +1,6 @@
 """Error classes for PyPresseportal"""
 
-from typing import Union
+from typing import List, Union
 
 import requests
 
@@ -72,7 +72,7 @@ class MediaError(Exception):
         allowed (list): List of media types allowed by API.
     """
 
-    def __init__(self, media: str, allowed: list):
+    def __init__(self, media: Union[str, None], allowed: List[str]):
         self.message = f"Media type '{media}' not permitted. API only accepts {', '.join(allowed)}."
         super().__init__(self.message)
 
