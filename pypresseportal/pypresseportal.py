@@ -40,6 +40,7 @@ class Story:
 
         try:
             self.data = data
+            self.keys = data.keys()
         except (TypeError, KeyError) as error:
             raise ApiDataError(str(error))
 
@@ -49,26 +50,26 @@ class Story:
             self.title = data["title"]
 
             # Check whether data contains body or teaser
-            if "body" in data.keys():
+            if "body" in self.keys:
                 self.body = data["body"]
-            elif "teaser" in data.keys():
+            elif "teaser" in self.keys:
                 self.teaser = data["teaser"]
             else:
                 raise ApiDataError("'body' or 'teaser' not included in response.")
 
             self.published = datetime.strptime(data["published"], "%Y-%m-%dT%H:%M:%S%z")
-            if "language" in data.keys():
+            if "language" in self.keys:
                 self.language = data["language"]
-            if "ressort" in data.keys():
+            if "ressort" in self.keys:
                 self.ressort = data["ressort"]
 
             # TBD: "Extended" info: https://api.presseportal.de/doc/format/company?
             # Check whether data contains company or office
-            if "company" in data.keys():
+            if "company" in self.keys:
                 self.company_id = data["company"]["id"]
                 self.company_url = data["company"]["url"]
                 self.company_name = data["company"]["name"]
-            elif "office" in data.keys():
+            elif "office" in self.keys:
                 self.office_id = data["office"]["id"]
                 self.office_url = data["office"]["url"]
                 self.office_name = data["office"]["name"]
@@ -78,19 +79,24 @@ class Story:
                 )
 
             # Check if keywords are present, map keywords
-            if type(data["keywords"]) == dict and "keyword" in data["keywords"].keys():
+            if isinstance(data["keywords"], dict) and "keyword" in data["keywords"]:
                 self.keywords = []
                 for keyword in data["keywords"]["keyword"]:
                     self.keywords.append(keyword)
 
+            # Check if media information is present
+            if "media" in self.keys:
+                media_keys = data["media"].keys()
+            else:
+                media_keys = None
             # Map media information as dicts
-            if "media" in data.keys() and "image" in data["media"].keys():
+            if media_keys and "image" in media_keys:
                 self.image = data["media"]["image"]
-            elif "media" in data.keys() and "audio" in data["media"].keys():
+            elif media_keys and "audio" in media_keys:
                 self.audio = data["media"]["audio"]
-            elif "media" in data.keys() and "video" in data["media"].keys():
+            elif media_keys and "video" in media_keys:
                 self.video = data["media"]["video"]
-            elif "media" in data.keys() and "document" in data["media"].keys():
+            elif media_keys and "document" in media_keys:
                 self.document = data["media"]["document"]
 
             self.highlight = data["highlight"]
@@ -221,15 +227,15 @@ class PresseportalApi:
         #######################Disable for testing ##############
         try:
             request = requests.get(url=url, params=params, headers=headers)
-            json_data = json.loads(request.text)
-            # with open("out.json", "w") as outfile:
-            #     json.dump(json_data, outfile)
         except (
             requests.exceptions.ConnectionError,
             requests.exceptions.TooManyRedirects,
             requests.exceptions.Timeout,
         ) as error:
             raise ApiConnectionFail(error)
+        json_data = json.loads(request.text)
+        # with open("out.json", "w") as outfile:
+        #     json.dump(json_data, outfile)
         #######################Enable for testing ###############
         # # read file
         # with open("out.json", "r") as in_file:
@@ -286,7 +292,7 @@ class PresseportalApi:
 
         # Check if media type is supported by API
         # Public service news allows only image or document
-        if media != None and not media in self.public_office_available_media_types:
+        if media and not media in self.public_office_available_media_types:
             raise MediaError(media, self.public_office_available_media_types)
 
         # Set up query components
@@ -329,7 +335,7 @@ class PresseportalApi:
 
         # Check if media type is supported by API
         # Public service news allows only image or document
-        if media != None and not media in self.public_office_available_media_types:
+        if media and not media in self.public_office_available_media_types:
             raise MediaError(media, self.public_office_available_media_types)
 
         # Check if region is supported by API
@@ -369,7 +375,7 @@ class PresseportalApi:
         """
 
         # Check if media type is supported by API
-        if media != None and not media in self.available_media_types:
+        if media and not media in self.available_media_types:
             raise MediaError(media, self.available_media_types)
 
         # Set up query components
