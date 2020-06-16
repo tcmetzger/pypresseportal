@@ -159,178 +159,17 @@ class PresseportalApi:
             raise ApiKeyError(api_key)
         else:
             self.api_key = api_key
-        self.available_media_types = ["image", "document", "audio", "video"]
-        self.public_office_available_media_types = ["image", "document"]
-        self.public_office_available_regions = [
-            "hh",
-            "sh",
-            "he",
-            "sl",
-            "bw",
-            "ni",
-            "bb",
-            "nrw",
-            "st",
-            "by",
-            "sn",
-            "rp",
-            "hb",
-            "mv",
-            "th",
-        ]
-        self.story_avaliable_topics = [
-            "auto-verkehr",
-            "bau-immobilien",
-            "fashion-beauty",
-            "finanzen",
-            "gesundheit-medizin",
-            "handel",
-            "medien-kultur",
-            "netzwelt",
-            "panorama",
-            "people",
-            "politik",
-            "presseschau",
-            "soziales",
-            "sport",
-            "tourismus-urlaub",
-            "umwelt",
-            "wirtschaft",
-            "wissen-bildung",
-        ]
-        self.story_available_keywords = [
-            "agrar",
-            "alternativeenergie",
-            "arbeit",
-            "armut",
-            "arzneimittel",
-            "atomenergie",
-            "aussenpolitik",
-            "auto",
-            "bahn",
-            "banken",
-            "bau",
-            "behinderte",
-            "bekleidung",
-            "bildung",
-            "boerse",
-            "buecher",
-            "bundesliga",
-            "bundesregierung",
-            "bundeswehr",
-            "chemie",
-            "computer",
-            "ecommerce",
-            "energie",
-            "erdbeben",
-            "familie",
-            "fernsehen",
-            "film",
-            "finanzen",
-            "fluechtlinge",
-            "formel1",
-            "freizeit",
-            "fussball",
-            "gas",
-            "gesellschaft",
-            "gesundheit",
-            "getraenke",
-            "gewerkschaften",
-            "globalisierung",
-            "golf",
-            "handball",
-            "handel",
-            "historisches",
-            "hunger",
-            "immobilien",
-            "industrie",
-            "innenpolitik",
-            "internet",
-            "jugendkriminalitaet",
-            "jugendlicher",
-            "justiz",
-            "katastrophe",
-            "kinder",
-            "kleidung",
-            "klimaveraenderung",
-            "konflikte",
-            "konjunktur",
-            "konsumgueter",
-            "kosmetik",
-            "krankenhaus",
-            "krankenversicherung",
-            "krieg",
-            "kriminalitaet",
-            "kultur",
-            "leichtathletik",
-            "celebrities",
-            "lifestyle",
-            "luftverkehr",
-            "luxusgueter",
-            "maschinenbau",
-            "medien",
-            "medizin",
-            "menschenrechte",
-            "mode",
-            "motorsport",
-            "musik",
-            "nahrungsmittel",
-            "naturschutz",
-            "oel",
-            "olympia",
-            "papier",
-            "partei",
-            "personalien",
-            "pharmaindustrie",
-            "politik",
-            "presseschau",
-            "radsport",
-            "ratgeber",
-            "religion",
-            "rente",
-            "schiffbau",
-            "schifffahrt",
-            "schule",
-            "senior",
-            "soziales",
-            "sport",
-            "steuern",
-            "strom",
-            "tabak",
-            "telekommunikation",
-            "tennis",
-            "textil",
-            "tier",
-            "tourismus",
-            "transport",
-            "umwelt",
-            "unterhaltung",
-            "verbraucher",
-            "verkehr",
-            "verlag",
-            "vermischtes",
-            "verpackung",
-            "versandhandel",
-            "versicherung",
-            "wahlen",
-            "weltmeisterschaft",
-            "werbung",
-            "wirtschaft",
-            "wissenschaft",
-        ]
-        self.investor_relations_news_types = [
-            "all",
-            "adhoc",
-            "vote",
-            "nvr",
-            "dd",
-            "news",
-            "tip",
-            "report",
-            "wpueg",
-            "info",
-            "ers",
-        ]
+
+        with open("../assets/assets.json", "r") as in_file:
+            data = in_file.read()
+        assets = json.loads(data)
+
+        self.media_types = assets["media_types"]
+        self.public_service_media_types = assets["public_service_media_types"]
+        self.public_service_regions = assets["public_service_regions"]
+        self.topics = assets["topics"]
+        self.keywords = assets["keywords"]
+        self.investor_relations_news_types = assets["investor_relations_news_types"]
         self.data_format = "json"
 
     def build_request(
@@ -448,8 +287,8 @@ class PresseportalApi:
 
         # Check if media type is supported by API
         # Public service news allows only image or document
-        if media and not media in self.public_office_available_media_types:
-            raise MediaError(media, self.public_office_available_media_types)
+        if media and not media in self.public_service_media_types:
+            raise MediaError(media, self.public_service_media_types)
 
         # Set up query components
         base_url = "https://api.presseportal.de/api/article/publicservice"
@@ -491,12 +330,12 @@ class PresseportalApi:
 
         # Check if media type is supported by API
         # Public service news allows only image or document
-        if media and not media in self.public_office_available_media_types:
-            raise MediaError(media, self.public_office_available_media_types)
+        if media and not media in self.public_service_media_types:
+            raise MediaError(media, self.public_service_media_types)
 
         # Check if region is supported by API
-        if region_code not in self.public_office_available_regions:
-            raise RegionError(region_code, self.public_office_available_regions)
+        if region_code not in self.public_service_regions:
+            raise RegionError(region_code, self.public_service_regions)
 
         # Set up query components
         base_url = f"https://api.presseportal.de/api/article/publicservice/region/{region_code}"
@@ -532,8 +371,8 @@ class PresseportalApi:
         """
 
         # Check if media type is supported by API
-        if media and not media in self.available_media_types:
-            raise MediaError(media, self.available_media_types)
+        if media and not media in self.media_types:
+            raise MediaError(media, self.media_types)
 
         # Set up query components
         base_url = "https://api.presseportal.de/api/article/all"
@@ -556,12 +395,12 @@ class PresseportalApi:
         """
 
         # Check if media type is supported by API
-        if media and not media in self.available_media_types:
-            raise MediaError(media, self.available_media_types)
+        if media and not media in self.media_types:
+            raise MediaError(media, self.media_types)
 
         # Check if topic is supported by API
-        if topic not in self.story_avaliable_topics:
-            raise TopicError(topic, self.story_avaliable_topics)
+        if topic not in self.topics:
+            raise TopicError(topic, self.topics)
 
         # Set up query components
         base_url = f"https://api.presseportal.de/api/article/topic/{topic}"
@@ -584,13 +423,13 @@ class PresseportalApi:
         """
 
         # Check if media type is supported by API
-        if media and not media in self.available_media_types:
-            raise MediaError(media, self.available_media_types)
+        if media and not media in self.media_types:
+            raise MediaError(media, self.media_types)
 
         # Check if keywords are supported by API
         for keyword in keywords:
-            if keyword not in self.story_available_keywords:
-                raise KeywordError(keyword, self.story_available_keywords)
+            if keyword not in self.keywords:
+                raise KeywordError(keyword, self.keywords)
 
         # Construct keyword string
         keywords_str = ",".join(keywords)
