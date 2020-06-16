@@ -206,7 +206,7 @@ class PresseportalApi:
 
         return url, params, headers
 
-    def get_data(self, url: str, params: dict, headers: dict) -> List[Story]:
+    def get_data(self, url: str, params: dict, headers: dict) -> dict:
         """Connects to API and maps raw data into objects.
 
         Args:
@@ -258,7 +258,15 @@ class PresseportalApi:
         else:
             raise NotImplementedError
 
-        # Parse stories from API into list of Story objects
+        # print(type(json_data))
+        # # Parse stories from API into list of Story objects
+        # stories_list = []
+        # for item in json_data["content"]["story"]:
+        #     stories_list.append(Story(item))
+
+        return json_data
+
+    def parse_story_data(self, json_data: dict) -> List[Story]:
         stories_list = []
         for item in json_data["content"]["story"]:
             stories_list.append(Story(item))
@@ -298,7 +306,8 @@ class PresseportalApi:
         url, params, headers = self.build_request(base_url, media, start, limit, teaser)
 
         # Query API and map results
-        stories_list = self.get_data(url=url, params=params, headers=headers)
+        json_data = self.get_data(url=url, params=params, headers=headers)
+        stories_list = self.parse_story_data(json_data)
 
         return stories_list
 
@@ -345,7 +354,8 @@ class PresseportalApi:
         url, params, headers = self.build_request(base_url, media, start, limit, teaser)
 
         # Query API and map results
-        stories_list = self.get_data(url=url, params=params, headers=headers)
+        json_data = self.get_data(url=url, params=params, headers=headers)
+        stories_list = self.parse_story_data(json_data)
 
         return stories_list
 
@@ -382,7 +392,8 @@ class PresseportalApi:
         url, params, headers = self.build_request(base_url, media, start, limit, teaser)
 
         # Query API and map results
-        stories_list = self.get_data(url=url, params=params, headers=headers)
+        json_data = self.get_data(url=url, params=params, headers=headers)
+        stories_list = self.parse_story_data(json_data)
 
         return stories_list
 
@@ -410,7 +421,8 @@ class PresseportalApi:
         url, params, headers = self.build_request(base_url, media, start, limit, teaser)
 
         # Query API and map results
-        stories_list = self.get_data(url=url, params=params, headers=headers)
+        json_data = self.get_data(url=url, params=params, headers=headers)
+        stories_list = self.parse_story_data(json_data)
 
         return stories_list
 
@@ -442,7 +454,8 @@ class PresseportalApi:
         url, params, headers = self.build_request(base_url, media, start, limit, teaser)
 
         # Query API and map results
-        stories_list = self.get_data(url=url, params=params, headers=headers)
+        json_data = self.get_data(url=url, params=params, headers=headers)
+        stories_list = self.parse_story_data(json_data)
 
         return stories_list
 
@@ -463,6 +476,7 @@ class PresseportalApi:
         )
 
         # Query API and map results
-        stories_list = self.get_data(url=url, params=params, headers=headers)
+        json_data = self.get_data(url=url, params=params, headers=headers)
+        stories_list = self.parse_story_data(json_data)
 
         return stories_list
