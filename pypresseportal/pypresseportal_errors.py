@@ -120,3 +120,16 @@ class KeywordError(Exception):
             f"Keyword '{keyword}' not permitted. API only accepts {', '.join(allowed)}."
         )
         super().__init__(self.message)
+
+
+class NewsTypeError(Exception):
+    """Raised if investor relations news type is not supported.
+
+    Args:
+        news_type (str): Unsupported investor relations news type.
+        allowed (list): List of investor relations news type allowed by API.
+    """
+
+    def __init__(self, news_type: str, allowed: list):
+        self.message = f"Investor relations news type '{news_type}' not permitted. API only accepts {', '.join(allowed)}."
+        super().__init__(self.message)

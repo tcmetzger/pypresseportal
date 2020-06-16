@@ -21,6 +21,7 @@ from .pypresseportal_errors import (
     RegionError,
     TopicError,
     KeywordError,
+    NewsTypeError,
 )
 
 
@@ -317,6 +318,19 @@ class PresseportalApi:
             "wirtschaft",
             "wissenschaft",
         ]
+        self.investor_relations_news_types = [
+            "all",
+            "adhoc",
+            "vote",
+            "nvr",
+            "dd",
+            "news",
+            "tip",
+            "report",
+            "wpueg",
+            "info",
+            "ers",
+        ]
         self.data_format = "json"
 
     def build_request(
@@ -542,9 +556,8 @@ class PresseportalApi:
         """
 
         # Check if media type is supported by API
-        # Public service news allows only image or document
-        if media and not media in self.public_office_available_media_types:
-            raise MediaError(media, self.public_office_available_media_types)
+        if media and not media in self.available_media_types:
+            raise MediaError(media, self.available_media_types)
 
         # Check if topic is supported by API
         if topic not in self.story_avaliable_topics:
@@ -571,9 +584,8 @@ class PresseportalApi:
         """
 
         # Check if media type is supported by API
-        # Public service news allows only image or document
-        if media and not media in self.public_office_available_media_types:
-            raise MediaError(media, self.public_office_available_media_types)
+        if media and not media in self.available_media_types:
+            raise MediaError(media, self.available_media_types)
 
         # Check if keywords are supported by API
         for keyword in keywords:
@@ -586,6 +598,27 @@ class PresseportalApi:
         # Set up query components
         base_url = f"https://api.presseportal.de/api/article/keyword/{keywords_str}"
         url, params, headers = self.build_request(base_url, media, start, limit, teaser)
+
+        # Query API and map results
+        stories_list = self.get_data(url=url, params=params, headers=headers)
+
+        return stories_list
+
+    def get_investor_relations_news(
+        self, news_type: str, start: int = 0, limit: int = 50, teaser: bool = False,
+    ) -> List[Story]:
+        """https://api.presseportal.de/doc/ir/list
+        """
+
+        # Check if investor relations news type is supported by API
+        if news_type not in self.investor_relations_news_types:
+            raise NewsTypeError(news_type, self.investor_relations_news_types)
+
+        # Set up query components
+        base_url = f"https://api.presseportal.de/api/ir/{news_type}"
+        url, params, headers = self.build_request(
+            base_url=base_url, media=None, start=start, limit=limit, teaser=teaser
+        )
 
         # Query API and map results
         stories_list = self.get_data(url=url, params=params, headers=headers)

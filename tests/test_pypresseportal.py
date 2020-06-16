@@ -13,6 +13,7 @@ from pypresseportal.pypresseportal_errors import (
     RegionError,
     TopicError,
     KeywordError,
+    NewsTypeError,
 )
 
 API_KEY = os.environ["API_KEY"]
@@ -122,4 +123,13 @@ class TestErrors:
         error_msg = f"Keyword '{invalid_keyword}' not permitted. API only accepts"
         with pytest.raises(KeywordError) as excinfo:
             PresseportalApi.get_stories_keywords(api_object, keywords=[invalid_keyword])
+        assert error_msg in str(excinfo.value)
+
+    def test_news_type_error(self):
+        invalid_news_type = "invalid"
+        error_msg = f"'{invalid_news_type}' not permitted. API only accepts"
+        with pytest.raises(NewsTypeError) as excinfo:
+            PresseportalApi.get_investor_relations_news(
+                api_object, news_type=invalid_news_type
+            )
         assert error_msg in str(excinfo.value)

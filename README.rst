@@ -68,3 +68,9 @@ public service stories available for this state. For example:
 >>> region_stories[0].id
 "1512631"
 
+4. get_stories_topic()
+
+5. get_stories_keywords()
+
+6. get_investor_relations_news()
+
