@@ -133,3 +133,27 @@ class NewsTypeError(Exception):
     def __init__(self, news_type: str, allowed: list):
         self.message = f"Investor relations news type '{news_type}' not permitted. API only accepts {', '.join(allowed)}."
         super().__init__(self.message)
+
+
+class SearchTermError(Exception):
+    """Raised if search term is not supported.
+
+    Args:
+        search_term (str): Unsupported search term.
+    """
+
+    def __init__(self, search_term: str):
+        self.message = f"Search term '{search_term}' not permitted. Search term must be at least 3 characters long."
+        super().__init__(self.message)
+
+
+class SearchEntityError(Exception):
+    """Raised if entity for search is not supported.
+
+    Args:
+        entity (str): Unsupported entity.
+    """
+
+    def __init__(self, search_term: str):
+        self.message = f"Can not search for entity '{search_term}', entity must be either 'company' or 'office'."
+        super().__init__(self.message)

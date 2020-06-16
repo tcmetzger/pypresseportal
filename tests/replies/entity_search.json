@@ -1,0 +1,21 @@
+{
+    "success": "1",
+    "request": {
+        "uri": "https://api.presseportal.de/api/search/company?format=json&amp;limit=1&amp;q=Berlin",
+        "limit": "1",
+        "format": "json",
+        "search": "company",
+        "term": "Berlin",
+        "hits": "1"
+    },
+    "content": {
+        "result": [
+            {
+                "id": "1234",
+                "url": "https://www.presseportal.de/nr/1234",
+                "name": "Berlin Test AG",
+                "type": "company"
+            }
+        ]
+    }
+}

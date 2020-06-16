@@ -14,6 +14,7 @@ from pypresseportal.pypresseportal_errors import (
     TopicError,
     KeywordError,
     NewsTypeError,
+    SearchTermError,
 )
 
 API_KEY = os.environ["API_KEY"]
@@ -44,19 +45,32 @@ class TestFunctionalities:
             "teaser": str(int(teaser)),
         }
 
-    def test_mapping(self):
+    def test_story_mapping(self):
         # read file
         with open("replies/get_public_service_news.json", "r") as in_file:
             data = in_file.read()
         # parse json
         json_data = json.loads(data)
-        # map file
-        test_object = Story(json_data["content"]["story"][0])
+        # test
+        test_object = PresseportalApi.parse_story_data(api_object, json_data)[0]
         assert test_object.id == "1234567"
         assert test_object.body == "Test message body."
         assert test_object.keywords == ["Polizei", "Kriminalität"]
         assert test_object.office_id == "12345"
         assert test_object.image[0]["name"] == "test.jpg"
+
+    def test_search_results_mapping(self):
+        # read file
+        with open("replies/entity_search.json", "r") as in_file:
+            data = in_file.read()
+        # parse json
+        json_data = json.loads(data)
+        # test
+        test_object = PresseportalApi.parse_search_results(api_object, json_data)[0]
+        assert test_object.id == "1234"
+        assert test_object.url == "https://www.presseportal.de/nr/1234"
+        assert test_object.name == "Berlin Test AG"
+        assert test_object.type == "company"
 
 
 class TestErrors:
@@ -131,5 +145,14 @@ class TestErrors:
         with pytest.raises(NewsTypeError) as excinfo:
             PresseportalApi.get_investor_relations_news(
                 api_object, news_type=invalid_news_type
+            )
+        assert error_msg in str(excinfo.value)
+
+    def test_search_term_error(self):
+        invalid_search_term = "no"
+        error_msg = "not permitted. Search term must be"
+        with pytest.raises(SearchTermError) as excinfo:
+            PresseportalApi.get_entity_search_results(
+                api_object, search_term=invalid_search_term
             )
         assert error_msg in str(excinfo.value)

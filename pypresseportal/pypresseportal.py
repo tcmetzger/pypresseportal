@@ -22,7 +22,29 @@ from .pypresseportal_errors import (
     TopicError,
     KeywordError,
     NewsTypeError,
+    SearchTermError,
+    SearchEntityError,
 )
+
+
+class Entity:
+    """Represents a company or a public service office
+    """
+
+    def __init__(self, data: dict):
+        try:
+            self.data = data
+            self.keys = data.keys()
+        except (TypeError, KeyError) as error:
+            raise ApiDataError(str(error))
+
+        try:
+            self.id = data["id"]
+            self.url = data["url"]
+            self.name = data["name"]
+            self.type = data["type"]
+        except (TypeError, KeyError) as error:
+            raise ApiDataError(str(error))
 
 
 class Story:
@@ -37,9 +59,6 @@ class Story:
         Args:
             data (dict): Raw data from API request
         """
-        #### TBD: decide behavior (keywords, media, etc.):
-        # - always have all attributes and some of them are None
-        # - only have attributes that have valid data
 
         try:
             self.data = data
@@ -179,11 +198,12 @@ class PresseportalApi:
         start: Union[int, None],
         limit: int,
         teaser: Union[bool, None],
+        search_term: Union[str, None] = None,
     ) -> Tuple[str, Dict[str, str], Dict[str, str]]:
 
         # Set up url and append media type, if required
         if media != None:
-            url = f"{base_url}/{media}"
+            url = f"{base_url}/{media.lower()}"
         else:
             url = base_url
 
@@ -198,6 +218,8 @@ class PresseportalApi:
             params["limit"] = str(limit)
         if teaser != None:
             params["teaser"] = str(int(teaser))
+        if search_term != None:
+            params["q"] = search_term
 
         # Set up headers
         headers = {
@@ -273,6 +295,13 @@ class PresseportalApi:
 
         return stories_list
 
+    def parse_search_results(self, json_data: dict) -> List[Entity]:
+        search_results_list = []
+        for item in json_data["content"]["result"]:
+            search_results_list.append(Entity(item))
+
+        return search_results_list
+
     def get_public_service_news(
         self, media: str = None, start: int = 0, limit: int = 50, teaser: bool = False,
     ) -> List[Story]:
@@ -298,7 +327,7 @@ class PresseportalApi:
 
         # Check if media type is supported by API
         # Public service news allows only image or document
-        if media and not media in self.public_service_media_types:
+        if media and not media.lower() in self.public_service_media_types:
             raise MediaError(media, self.public_service_media_types)
 
         # Set up query components
@@ -342,7 +371,7 @@ class PresseportalApi:
 
         # Check if media type is supported by API
         # Public service news allows only image or document
-        if media and not media in self.public_service_media_types:
+        if media and not media.lower() in self.public_service_media_types:
             raise MediaError(media, self.public_service_media_types)
 
         # Check if region is supported by API
@@ -384,7 +413,7 @@ class PresseportalApi:
         """
 
         # Check if media type is supported by API
-        if media and not media in self.media_types:
+        if media and not media.lower() in self.media_types:
             raise MediaError(media, self.media_types)
 
         # Set up query components
@@ -409,7 +438,7 @@ class PresseportalApi:
         """
 
         # Check if media type is supported by API
-        if media and not media in self.media_types:
+        if media and not media.lower() in self.media_types:
             raise MediaError(media, self.media_types)
 
         # Check if topic is supported by API
@@ -438,7 +467,7 @@ class PresseportalApi:
         """
 
         # Check if media type is supported by API
-        if media and not media in self.media_types:
+        if media and not media.lower() in self.media_types:
             raise MediaError(media, self.media_types)
 
         # Check if keywords are supported by API
@@ -466,11 +495,11 @@ class PresseportalApi:
         """
 
         # Check if investor relations news type is supported by API
-        if news_type not in self.investor_relations_news_types:
+        if news_type.lower() not in self.investor_relations_news_types:
             raise NewsTypeError(news_type, self.investor_relations_news_types)
 
         # Set up query components
-        base_url = f"https://api.presseportal.de/api/ir/{news_type}"
+        base_url = f"https://api.presseportal.de/api/ir/{news_type.lower()}"
         url, params, headers = self.build_request(
             base_url=base_url, media=None, start=start, limit=limit, teaser=teaser
         )
@@ -480,3 +509,46 @@ class PresseportalApi:
         stories_list = self.parse_story_data(json_data)
 
         return stories_list
+
+    def get_entity_search_results(
+        self,
+        search_term: Union[str, List[str]],
+        entity: str = "company",
+        limit: int = 20,
+    ) -> List[Entity]:
+        """https://api.presseportal.de/doc/search/company
+        can be one str or a list of strings [OR search]
+        can be city, company name, part of a city or part of a company name
+        """
+
+        # Check search term
+        if isinstance(search_term, list):
+            search_term = ",".join(search_term).lower()
+        elif isinstance(search_term, str) and len(search_term) > 3:
+            search_term = search_term.lower()
+        else:
+            raise SearchTermError(search_term)
+
+        # Check entity and define base_url
+        if entity.lower() == "office":
+            base_url = "https://api.presseportal.de/api/search/office"
+        elif entity.lower() == "company":
+            base_url = "https://api.presseportal.de/api/search/company"
+        else:
+            raise SearchEntityError(entity)
+
+        # Set up query components
+        url, params, headers = self.build_request(
+            base_url=base_url,
+            media=None,
+            start=None,
+            limit=limit,
+            teaser=None,
+            search_term=search_term,
+        )
+
+        # Query API and map results
+        json_data = self.get_data(url=url, params=params, headers=headers)
+        search_results_list = self.parse_search_results(json_data)
+
+        return search_results_list
