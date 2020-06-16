@@ -176,10 +176,10 @@ class PresseportalApi:
         self,
         base_url: str,
         media: Union[str, None],
-        start: int,
+        start: Union[int, None],
         limit: int,
-        teaser: bool,
-    ) -> Tuple[str, Dict[str, object], Dict[str, str]]:
+        teaser: Union[bool, None],
+    ) -> Tuple[str, Dict[str, str], Dict[str, str]]:
 
         # Set up url and append media type, if required
         if media != None:
@@ -187,14 +187,17 @@ class PresseportalApi:
         else:
             url = base_url
 
-        # Set up params
+        # Set up params (all arguments that are not None)
         params = {
             "api_key": self.api_key,
             "format": self.data_format,
-            "start": start,
-            "limit": limit,
-            "teaser": int(teaser),
         }
+        if start != None:
+            params["start"] = str(start)
+        if limit != None:
+            params["limit"] = str(limit)
+        if teaser != None:
+            params["teaser"] = str(int(teaser))
 
         # Set up headers
         headers = {

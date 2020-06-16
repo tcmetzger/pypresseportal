@@ -39,9 +39,9 @@ class TestFunctionalities:
         assert params == {
             "api_key": API_KEY,
             "format": "json",
-            "start": start,
-            "limit": limit,
-            "teaser": int(teaser),
+            "start": str(start),
+            "limit": str(limit),
+            "teaser": str(int(teaser)),
         }
 
     def test_mapping(self):
