@@ -90,3 +90,33 @@ class RegionError(Exception):
             f"Region '{region}' not permitted. API only accepts {', '.join(allowed)}."
         )
         super().__init__(self.message)
+
+
+class TopicError(Exception):
+    """Raised if topic is not supported.
+
+    Args:
+        topic (str): Unsupported topic.
+        allowed (list): List of topics allowed by API.
+    """
+
+    def __init__(self, topic: str, allowed: list):
+        self.message = (
+            f"Topic '{topic}' not permitted. API only accepts {', '.join(allowed)}."
+        )
+        super().__init__(self.message)
+
+
+class KeywordError(Exception):
+    """Raised if keyword is not supported.
+
+    Args:
+        keyword (str): Unsupported keyword.
+        allowed (list): List of keyword allowed by API.
+    """
+
+    def __init__(self, keyword: str, allowed: list):
+        self.message = (
+            f"Keyword '{keyword}' not permitted. API only accepts {', '.join(allowed)}."
+        )
+        super().__init__(self.message)

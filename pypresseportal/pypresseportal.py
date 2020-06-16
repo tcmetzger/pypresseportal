@@ -19,6 +19,8 @@ from .pypresseportal_errors import (
     ApiDataError,
     MediaError,
     RegionError,
+    TopicError,
+    KeywordError,
 )
 
 
@@ -174,6 +176,146 @@ class PresseportalApi:
             "hb",
             "mv",
             "th",
+        ]
+        self.story_avaliable_topics = [
+            "auto-verkehr",
+            "bau-immobilien",
+            "fashion-beauty",
+            "finanzen",
+            "gesundheit-medizin",
+            "handel",
+            "medien-kultur",
+            "netzwelt",
+            "panorama",
+            "people",
+            "politik",
+            "presseschau",
+            "soziales",
+            "sport",
+            "tourismus-urlaub",
+            "umwelt",
+            "wirtschaft",
+            "wissen-bildung",
+        ]
+        self.story_available_keywords = [
+            "agrar",
+            "alternativeenergie",
+            "arbeit",
+            "armut",
+            "arzneimittel",
+            "atomenergie",
+            "aussenpolitik",
+            "auto",
+            "bahn",
+            "banken",
+            "bau",
+            "behinderte",
+            "bekleidung",
+            "bildung",
+            "boerse",
+            "buecher",
+            "bundesliga",
+            "bundesregierung",
+            "bundeswehr",
+            "chemie",
+            "computer",
+            "ecommerce",
+            "energie",
+            "erdbeben",
+            "familie",
+            "fernsehen",
+            "film",
+            "finanzen",
+            "fluechtlinge",
+            "formel1",
+            "freizeit",
+            "fussball",
+            "gas",
+            "gesellschaft",
+            "gesundheit",
+            "getraenke",
+            "gewerkschaften",
+            "globalisierung",
+            "golf",
+            "handball",
+            "handel",
+            "historisches",
+            "hunger",
+            "immobilien",
+            "industrie",
+            "innenpolitik",
+            "internet",
+            "jugendkriminalitaet",
+            "jugendlicher",
+            "justiz",
+            "katastrophe",
+            "kinder",
+            "kleidung",
+            "klimaveraenderung",
+            "konflikte",
+            "konjunktur",
+            "konsumgueter",
+            "kosmetik",
+            "krankenhaus",
+            "krankenversicherung",
+            "krieg",
+            "kriminalitaet",
+            "kultur",
+            "leichtathletik",
+            "celebrities",
+            "lifestyle",
+            "luftverkehr",
+            "luxusgueter",
+            "maschinenbau",
+            "medien",
+            "medizin",
+            "menschenrechte",
+            "mode",
+            "motorsport",
+            "musik",
+            "nahrungsmittel",
+            "naturschutz",
+            "oel",
+            "olympia",
+            "papier",
+            "partei",
+            "personalien",
+            "pharmaindustrie",
+            "politik",
+            "presseschau",
+            "radsport",
+            "ratgeber",
+            "religion",
+            "rente",
+            "schiffbau",
+            "schifffahrt",
+            "schule",
+            "senior",
+            "soziales",
+            "sport",
+            "steuern",
+            "strom",
+            "tabak",
+            "telekommunikation",
+            "tennis",
+            "textil",
+            "tier",
+            "tourismus",
+            "transport",
+            "umwelt",
+            "unterhaltung",
+            "verbraucher",
+            "verkehr",
+            "verlag",
+            "vermischtes",
+            "verpackung",
+            "versandhandel",
+            "versicherung",
+            "wahlen",
+            "weltmeisterschaft",
+            "werbung",
+            "wirtschaft",
+            "wissenschaft",
         ]
         self.data_format = "json"
 
@@ -357,6 +499,7 @@ class PresseportalApi:
         """Queries API for public service news.
 
         Returns a list of Story objects. More information: https://api.presseportal.de/doc/article/all
+        print(api_object.available_media_types) for list of available media types.
 
         Args:
             media (str, optional): Only request stories containing this specific media type (``image``, ``document``, ``audio`` or ``video``). Defaults to None.
@@ -380,6 +523,68 @@ class PresseportalApi:
 
         # Set up query components
         base_url = "https://api.presseportal.de/api/article/all"
+        url, params, headers = self.build_request(base_url, media, start, limit, teaser)
+
+        # Query API and map results
+        stories_list = self.get_data(url=url, params=params, headers=headers)
+
+        return stories_list
+
+    def get_stories_topic(
+        self,
+        topic: str,
+        media: str = None,
+        start: int = 0,
+        limit: int = 50,
+        teaser: bool = False,
+    ) -> List[Story]:
+        """https://api.presseportal.de/doc/article/topic/ident
+        """
+
+        # Check if media type is supported by API
+        # Public service news allows only image or document
+        if media and not media in self.public_office_available_media_types:
+            raise MediaError(media, self.public_office_available_media_types)
+
+        # Check if topic is supported by API
+        if topic not in self.story_avaliable_topics:
+            raise TopicError(topic, self.story_avaliable_topics)
+
+        # Set up query components
+        base_url = f"https://api.presseportal.de/api/article/topic/{topic}"
+        url, params, headers = self.build_request(base_url, media, start, limit, teaser)
+
+        # Query API and map results
+        stories_list = self.get_data(url=url, params=params, headers=headers)
+
+        return stories_list
+
+    def get_stories_keywords(
+        self,
+        keywords: List[str],
+        media: str = None,
+        start: int = 0,
+        limit: int = 50,
+        teaser: bool = False,
+    ) -> List[Story]:
+        """https://api.presseportal.de/doc/article/keyword/ident
+        """
+
+        # Check if media type is supported by API
+        # Public service news allows only image or document
+        if media and not media in self.public_office_available_media_types:
+            raise MediaError(media, self.public_office_available_media_types)
+
+        # Check if keywords are supported by API
+        for keyword in keywords:
+            if keyword not in self.story_available_keywords:
+                raise KeywordError(keyword, self.story_available_keywords)
+
+        # Construct keyword string
+        keywords_str = ",".join(keywords)
+
+        # Set up query components
+        base_url = f"https://api.presseportal.de/api/article/keyword/{keywords_str}"
         url, params, headers = self.build_request(base_url, media, start, limit, teaser)
 
         # Query API and map results

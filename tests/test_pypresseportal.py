@@ -11,6 +11,8 @@ from pypresseportal.pypresseportal_errors import (
     ApiDataError,
     MediaError,
     RegionError,
+    TopicError,
+    KeywordError,
 )
 
 API_KEY = os.environ["API_KEY"]
@@ -70,7 +72,7 @@ class TestErrors:
         assert error_msg in str(excinfo.value)
 
     def test_key_error(self):
-        api_key = int("123")
+        api_key = "12"
         with pytest.raises(ApiKeyError) as excinfo:
             test_object = PresseportalApi(api_key)
         error_msg = f"Valid API key required. Key '{api_key}' is not valid."
@@ -106,4 +108,18 @@ class TestErrors:
             PresseportalApi.get_public_service_specific_region(
                 api_object, region_code=invalid_region
             )
+        assert error_msg in str(excinfo.value)
+
+    def test_topic_error(self):
+        invalid_topic = "invalid"
+        error_msg = f"Topic '{invalid_topic}' not permitted. API only accepts"
+        with pytest.raises(TopicError) as excinfo:
+            PresseportalApi.get_stories_topic(api_object, topic=invalid_topic)
+        assert error_msg in str(excinfo.value)
+
+    def test_keyword_error(self):
+        invalid_keyword = "invalid"
+        error_msg = f"Keyword '{invalid_keyword}' not permitted. API only accepts"
+        with pytest.raises(KeywordError) as excinfo:
+            PresseportalApi.get_stories_keywords(api_object, keywords=[invalid_keyword])
         assert error_msg in str(excinfo.value)
