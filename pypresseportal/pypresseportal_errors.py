@@ -1,6 +1,6 @@
 """Error classes for PyPresseportal"""
 
-from typing import List, Union
+from typing import Union
 
 import requests
 
@@ -72,7 +72,7 @@ class MediaError(Exception):
         allowed (list): List of media types allowed by API.
     """
 
-    def __init__(self, media: Union[str, None], allowed: List[str]):
+    def __init__(self, media: Union[str, None], allowed: tuple):
         self.message = f"Media type '{media}' not permitted. API only accepts {', '.join(allowed)}."
         super().__init__(self.message)
 
@@ -85,7 +85,7 @@ class RegionError(Exception):
         allowed (list): List of regions allowed by API.
     """
 
-    def __init__(self, region: str, allowed: list):
+    def __init__(self, region: str, allowed: tuple):
         self.message = (
             f"Region '{region}' not permitted. API only accepts {', '.join(allowed)}."
         )
@@ -100,7 +100,7 @@ class TopicError(Exception):
         allowed (list): List of topics allowed by API.
     """
 
-    def __init__(self, topic: str, allowed: list):
+    def __init__(self, topic: str, allowed: tuple):
         self.message = (
             f"Topic '{topic}' not permitted. API only accepts {', '.join(allowed)}."
         )
@@ -115,7 +115,7 @@ class KeywordError(Exception):
         allowed (list): List of keyword allowed by API.
     """
 
-    def __init__(self, keyword: str, allowed: list):
+    def __init__(self, keyword: str, allowed: tuple):
         self.message = (
             f"Keyword '{keyword}' not permitted. API only accepts {', '.join(allowed)}."
         )
@@ -130,7 +130,7 @@ class NewsTypeError(Exception):
         allowed (list): List of investor relations news type allowed by API.
     """
 
-    def __init__(self, news_type: str, allowed: list):
+    def __init__(self, news_type: str, allowed: tuple):
         self.message = f"Investor relations news type '{news_type}' not permitted. API only accepts {', '.join(allowed)}."
         super().__init__(self.message)
 

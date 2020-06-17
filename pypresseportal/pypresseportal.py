@@ -2,7 +2,7 @@
 
 PyPresseportal makes data from the presseportal.de API
  accessible as Python objects. You need an API key from
- presseportal.de to use PyPresseportal.
+ presseportal.de to use PyPresseportal (https://api.presseportal.de/en).
 """
 
 import json
@@ -12,7 +12,15 @@ from typing import Dict, List, Tuple, Union
 
 import requests
 
-from .pypresseportal_errors import (
+from pypresseportal.constants import (
+    MEDIA_TYPES,
+    PUBLIC_SERVICE_MEDIA_TYPES,
+    INVESTOR_RELATIONS_NEWS_TYPES,
+    PUBLIC_SERVICE_REGIONS,
+    TOPICS,
+    KEYWORDS,
+)
+from pypresseportal.pypresseportal_errors import (
     ApiError,
     ApiConnectionFail,
     ApiKeyError,
@@ -28,23 +36,21 @@ from .pypresseportal_errors import (
 
 
 class Entity:
-    """Represents a company or a public service office
+    """Represents a company or a public service office search result
     """
 
     def __init__(self, data: dict):
-        try:
-            self.data = data
-            self.keys = data.keys()
-        except (TypeError, KeyError) as error:
-            raise ApiDataError(str(error))
+        self.data = data
+        data_keys = self.data.keys()
+        required_keys = ("id", "url", "name", "type")
+        for required_key in required_keys:
+            if required_key not in data_keys:
+                raise ApiDataError(f"Required key {required_key} missing.")
 
-        try:
-            self.id = data["id"]
-            self.url = data["url"]
-            self.name = data["name"]
-            self.type = data["type"]
-        except (TypeError, KeyError) as error:
-            raise ApiDataError(str(error))
+        self.id = data["id"]
+        self.url = data["url"]
+        self.name = data["name"]
+        self.type = data["type"]
 
 
 class Story:
@@ -59,79 +65,61 @@ class Story:
         Args:
             data (dict): Raw data from API request
         """
+        self.data = data
+        data_keys = self.data.keys()
+        required_keys = ("id", "url", "title", "published", "highlight", "short")
+        for required_key in required_keys:
+            if required_key not in data_keys:
+                raise ApiDataError(f"Required key {required_key} missing.")
 
-        try:
-            self.data = data
-            self.keys = data.keys()
-        except (TypeError, KeyError) as error:
-            raise ApiDataError(str(error))
+        self.id = data["id"]
+        self.url = data["url"]
+        self.title = data["title"]
+        self.published = datetime.strptime(data["published"], "%Y-%m-%dT%H:%M:%S%z")
+        self.highlight = data["highlight"]
+        self.short = data["short"]
 
-        try:
-            self.id = data["id"]
-            self.url = data["url"]
-            self.title = data["title"]
+        # Check whether data contains body or teaser
+        if "body" in data_keys:
+            self.body = data["body"]
+        elif "teaser" in data_keys:
+            self.teaser = data["teaser"]
+        else:
+            raise ApiDataError("'body' or 'teaser' not included in response.")
 
-            # Check whether data contains body or teaser
-            if "body" in self.keys:
-                self.body = data["body"]
-            elif "teaser" in self.keys:
-                self.teaser = data["teaser"]
-            else:
-                raise ApiDataError("'body' or 'teaser' not included in response.")
+        if "language" in data_keys:
+            self.language = data["language"]
+        if "ressort" in data_keys:
+            self.ressort = data["ressort"]
 
-            self.published = datetime.strptime(data["published"], "%Y-%m-%dT%H:%M:%S%z")
-            if "language" in self.keys:
-                self.language = data["language"]
-            if "ressort" in self.keys:
-                self.ressort = data["ressort"]
+        # TBD: "Extended" info: https://api.presseportal.de/doc/format/company?
+        # Check whether data contains company or office
+        if "company" in data_keys:
+            self.company_id = data["company"]["id"]
+            self.company_url = data["company"]["url"]
+            self.company_name = data["company"]["name"]
+        elif "office" in data_keys:
+            self.office_id = data["office"]["id"]
+            self.office_url = data["office"]["url"]
+            self.office_name = data["office"]["name"]
+        else:
+            raise ApiDataError("'company' or 'office' data not included in response.")
 
-            # TBD: "Extended" info: https://api.presseportal.de/doc/format/company?
-            # Check whether data contains company or office
-            if "company" in self.keys:
-                self.company_id = data["company"]["id"]
-                self.company_url = data["company"]["url"]
-                self.company_name = data["company"]["name"]
-            elif "office" in self.keys:
-                self.office_id = data["office"]["id"]
-                self.office_url = data["office"]["url"]
-                self.office_name = data["office"]["name"]
-            else:
-                raise ApiDataError(
-                    "'company' or 'office' data not included in response."
-                )
+        # Check if keywords are present, map keywords
+        if type(data["keywords"]) is dict and "keyword" in data["keywords"]:
+            self.keywords = data["keywords"]["keyword"]
 
-            # Check if keywords are present, map keywords
-            if isinstance(data["keywords"], dict) and "keyword" in data["keywords"]:
-                self.keywords = []
-                for keyword in data["keywords"]["keyword"]:
-                    self.keywords.append(keyword)
-
-            # Check if media information is present
-            if "media" in self.keys:
-                media_keys = data["media"].keys()
-            else:
-                media_keys = None
-            # Map media information as dicts
-            if media_keys and "image" in media_keys:
-                self.image = data["media"]["image"]
-            elif media_keys and "audio" in media_keys:
-                self.audio = data["media"]["audio"]
-            elif media_keys and "video" in media_keys:
-                self.video = data["media"]["video"]
-            elif media_keys and "document" in media_keys:
-                self.document = data["media"]["document"]
-
-            self.highlight = data["highlight"]
-            self.short = data["short"]
-        except (TypeError, KeyError) as error:
-            raise ApiDataError(str(error))
-
-    # def __init__(self, ressort):
-    #     self.ressort = ressort
-
-    # @property
-    # def department(self):
-    #     return self.ressort
+        # Check if media information is present
+        media_keys = []
+        if "media" in data_keys:
+            media_keys = data["media"].keys()
+        # PresseportalAPI.media_types
+        # Map media information as dicts
+        # MEDIA_TYPES are "image", "document", "audio", "video"
+        for media_type in MEDIA_TYPES:
+            if media_keys and media_type in media_keys:
+                # Dynamically create attributes for media_type
+                setattr(self, media_type, data["media"][media_type])
 
 
 class PresseportalApi:
@@ -174,22 +162,11 @@ class PresseportalApi:
     def __init__(self, api_key: str):
         """Constructor method.
         """
-        if not type(api_key) is str or len(api_key) < 5:
-            raise ApiKeyError(api_key)
-        else:
-            self.api_key = api_key
-
-        with open("../assets/assets.json", "r") as in_file:
-            data = in_file.read()
-        assets = json.loads(data)
-
-        self.media_types = assets["media_types"]
-        self.public_service_media_types = assets["public_service_media_types"]
-        self.public_service_regions = assets["public_service_regions"]
-        self.topics = assets["topics"]
-        self.keywords = assets["keywords"]
-        self.investor_relations_news_types = assets["investor_relations_news_types"]
         self.data_format = "json"
+        if type(api_key) is str and len(api_key) > 5:
+            self.api_key = api_key
+        else:
+            raise ApiKeyError(api_key)
 
     def build_request(
         self,
@@ -202,23 +179,22 @@ class PresseportalApi:
     ) -> Tuple[str, Dict[str, str], Dict[str, str]]:
 
         # Set up url and append media type, if required
-        if media != None:
-            url = f"{base_url}/{media.lower()}"
-        else:
-            url = base_url
+        url = base_url
+        if media:
+            url += f"/{media.lower()}"
 
         # Set up params (all arguments that are not None)
         params = {
             "api_key": self.api_key,
             "format": self.data_format,
         }
-        if start != None:
+        if start is not None:
             params["start"] = str(start)
-        if limit != None:
+        if limit is not None:
             params["limit"] = str(limit)
-        if teaser != None:
+        if teaser is not None:
             params["teaser"] = str(int(teaser))
-        if search_term != None:
+        if search_term is not None:
             params["q"] = search_term
 
         # Set up headers
@@ -264,27 +240,11 @@ class PresseportalApi:
         # json_data = json.loads(data)
         #########################################################
 
-        # Raise error if API does not report success (ApiError or NotImplementedError)
-        if "success" in json_data.keys() and json_data["success"] == "1":
-            pass
-        elif "error" in json_data.keys():
-            if (
-                "code" in json_data["error"].keys()
-                and "msg" in json_data["error"].keys()
-            ):
-                error_code = json_data["error"]["code"]
-                error_msg = json_data["error"]["msg"]
-                raise ApiError(error_code, error_msg)
-            else:
-                raise NotImplementedError
-        else:
-            raise NotImplementedError
-
-        # print(type(json_data))
-        # # Parse stories from API into list of Story objects
-        # stories_list = []
-        # for item in json_data["content"]["story"]:
-        #     stories_list.append(Story(item))
+        # Raise error if API does not report success
+        if "error" in json_data:
+            error_code = json_data["error"]["code"]
+            error_msg = json_data["error"]["msg"]
+            raise ApiError(error_code, error_msg)
 
         return json_data
 
@@ -327,8 +287,8 @@ class PresseportalApi:
 
         # Check if media type is supported by API
         # Public service news allows only image or document
-        if media and not media.lower() in self.public_service_media_types:
-            raise MediaError(media, self.public_service_media_types)
+        if media and media.lower() not in PUBLIC_SERVICE_MEDIA_TYPES:
+            raise MediaError(media, PUBLIC_SERVICE_MEDIA_TYPES)
 
         # Set up query components
         base_url = "https://api.presseportal.de/api/article/publicservice"
@@ -371,12 +331,12 @@ class PresseportalApi:
 
         # Check if media type is supported by API
         # Public service news allows only image or document
-        if media and not media.lower() in self.public_service_media_types:
-            raise MediaError(media, self.public_service_media_types)
+        if media and media.lower() not in PUBLIC_SERVICE_MEDIA_TYPES:
+            raise MediaError(media, PUBLIC_SERVICE_MEDIA_TYPES)
 
         # Check if region is supported by API
-        if region_code not in self.public_service_regions:
-            raise RegionError(region_code, self.public_service_regions)
+        if region_code not in PUBLIC_SERVICE_REGIONS:
+            raise RegionError(region_code, PUBLIC_SERVICE_REGIONS)
 
         # Set up query components
         base_url = f"https://api.presseportal.de/api/article/publicservice/region/{region_code}"
@@ -413,8 +373,8 @@ class PresseportalApi:
         """
 
         # Check if media type is supported by API
-        if media and not media.lower() in self.media_types:
-            raise MediaError(media, self.media_types)
+        if media and media.lower() not in MEDIA_TYPES:
+            raise MediaError(media, MEDIA_TYPES)
 
         # Set up query components
         base_url = "https://api.presseportal.de/api/article/all"
@@ -438,12 +398,12 @@ class PresseportalApi:
         """
 
         # Check if media type is supported by API
-        if media and not media.lower() in self.media_types:
-            raise MediaError(media, self.media_types)
+        if media and media.lower() not in MEDIA_TYPES:
+            raise MediaError(media, MEDIA_TYPES)
 
         # Check if topic is supported by API
-        if topic not in self.topics:
-            raise TopicError(topic, self.topics)
+        if topic not in TOPICS:
+            raise TopicError(topic, TOPICS)
 
         # Set up query components
         base_url = f"https://api.presseportal.de/api/article/topic/{topic}"
@@ -467,13 +427,13 @@ class PresseportalApi:
         """
 
         # Check if media type is supported by API
-        if media and not media.lower() in self.media_types:
-            raise MediaError(media, self.media_types)
+        if media and media.lower() not in MEDIA_TYPES:
+            raise MediaError(media, MEDIA_TYPES)
 
         # Check if keywords are supported by API
         for keyword in keywords:
-            if keyword not in self.keywords:
-                raise KeywordError(keyword, self.keywords)
+            if keyword not in KEYWORDS:
+                raise KeywordError(keyword, KEYWORDS)
 
         # Construct keyword string
         keywords_str = ",".join(keywords)
@@ -495,8 +455,8 @@ class PresseportalApi:
         """
 
         # Check if investor relations news type is supported by API
-        if news_type.lower() not in self.investor_relations_news_types:
-            raise NewsTypeError(news_type, self.investor_relations_news_types)
+        if news_type.lower() not in INVESTOR_RELATIONS_NEWS_TYPES:
+            raise NewsTypeError(news_type, INVESTOR_RELATIONS_NEWS_TYPES)
 
         # Set up query components
         base_url = f"https://api.presseportal.de/api/ir/{news_type.lower()}"
