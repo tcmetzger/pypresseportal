@@ -1,0 +1,27 @@
+{
+    "success": "1",
+    "request": {
+        "uri": "https://api.presseportal.de/api/info/office/115876?format=json",
+        "format": "json",
+        "office": "115876"
+    },
+    "office": {
+        "id": "115876",
+        "url": "https://www.presseportal.de/blaulicht/nr/115876",
+        "name": "Feuerwehr Test",
+        "logo": "https://cache.pressmailing.net/thumbnail/big/e972db09-dd8f-49b5-8295-28aea888e86f/logo",
+        "shortname": "FW-Test",
+        "rss": "https://www.presseportal.de/rss/dienststelle_115876.rss2",
+        "homepage": "http://www.test.test",
+        "web": [
+            {
+                "link": [
+                    {
+                        "title": "Homepage",
+                        "url": "http://www.test.test"
+                    }
+                ]
+            }
+        ]
+    }
+}

@@ -35,6 +35,27 @@ from pypresseportal.pypresseportal_errors import (
 )
 
 
+class Company:
+    """ Represents information about a company https://api.presseportal.de/en/doc/format/company
+    """
+
+    def __init__(self, data: dict):
+        self.data = data
+        data_keys = self.data.keys()
+        required_keys = ("id", "url", "name")
+
+        for required_key in required_keys:
+            if required_key in data_keys:
+                setattr(self, required_key, data[required_key])
+            else:
+                raise ApiDataError(f"Required key {required_key} missing.")
+
+        optional_keys = ("shortname", "rss", "logo", "web", "homepage")
+        for optional_key in optional_keys:
+            if optional_key in data_keys:
+                setattr(self, optional_key, data[optional_key])
+
+
 class Entity:
     """Represents a company or a public service office search result
     """
@@ -51,6 +72,28 @@ class Entity:
         self.url = data["url"]
         self.name = data["name"]
         self.type = data["type"]
+
+
+class Office:
+    """ Represents information about a public service office 
+    https://api.presseportal.de/doc/format/office
+    """
+
+    def __init__(self, data: dict):
+        self.data = data
+        data_keys = self.data.keys()
+        required_keys = ("id", "url", "name")
+
+        for required_key in required_keys:
+            if required_key in data_keys:
+                setattr(self, required_key, data[required_key])
+            else:
+                raise ApiDataError(f"Required key {required_key} missing.")
+
+        optional_keys = ("shortname", "rss", "logo", "web", "homepage")
+        for optional_key in optional_keys:
+            if optional_key in data_keys:
+                setattr(self, optional_key, data[optional_key])
 
 
 class Story:
@@ -171,10 +214,10 @@ class PresseportalApi:
     def build_request(
         self,
         base_url: str,
-        media: Union[str, None],
-        start: Union[int, None],
-        limit: int,
-        teaser: Union[bool, None],
+        media: Union[str, None] = None,
+        start: Union[int, None] = None,
+        limit: Union[int, None] = None,
+        teaser: Union[bool, None] = None,
         search_term: Union[str, None] = None,
     ) -> Tuple[str, Dict[str, str], Dict[str, str]]:
 
@@ -512,3 +555,41 @@ class PresseportalApi:
         search_results_list = self.parse_search_results(json_data)
 
         return search_results_list
+
+    def get_company_information(self, id: str) -> Company:
+        """https://api.presseportal.de/doc/info/company/id
+        company id (eg through entity search)
+        """
+
+        # Check id and define base_url
+        if type(id) is not str:
+            id = str(id)
+        base_url = f"https://api.presseportal.de/api/info/company/{id}"
+
+        # Set up query components
+        url, params, headers = self.build_request(base_url=base_url)
+
+        # Query API and map results
+        json_data = self.get_data(url=url, params=params, headers=headers)
+        company_info = Company(json_data["company"])
+
+        return company_info
+
+    def get_public_service_office_information(self, id: str) -> Office:
+        """https://api.presseportal.de/doc/info/company/id
+        company id (eg through entity search)
+        """
+
+        # Check id and define base_url
+        if type(id) is not str:
+            id = str(id)
+        base_url = f"https://api.presseportal.de/api/info/office/{id}"
+
+        # Set up query components
+        url, params, headers = self.build_request(base_url=base_url)
+
+        # Query API and map results
+        json_data = self.get_data(url=url, params=params, headers=headers)
+        office_info = Office(json_data["office"])
+
+        return office_info

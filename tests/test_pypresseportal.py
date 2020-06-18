@@ -1,9 +1,10 @@
 import json
 import os
+from pypresseportal.pypresseportal import Company
 
 import pytest
 
-from pypresseportal import PresseportalApi, Story
+from pypresseportal import PresseportalApi, Story, Company, Office
 from pypresseportal.pypresseportal_errors import (
     ApiError,
     ApiConnectionFail,
@@ -21,7 +22,7 @@ API_KEY = os.environ["API_KEY"]
 api_object = PresseportalApi(API_KEY)
 
 
-class TestFunctionalities:
+class TestFunctions:
     def test_build_request(self):
         media = "image"
         start = 0
@@ -71,6 +72,32 @@ class TestFunctionalities:
         assert test_object.url == "https://www.presseportal.de/nr/1234"
         assert test_object.name == "Berlin Test AG"
         assert test_object.type == "company"
+
+    def test_company_info_mapping(self):
+        # read file
+        with open("replies/company_info.json", "r") as in_file:
+            data = in_file.read()
+        # parse json
+        json_data = json.loads(data)
+        # test
+        test_object = Company(json_data["company"])
+        assert test_object.id == "100255"
+        assert test_object.url == "https://www.presseportal.de/nr/100255"
+        assert test_object.name == "Test GmbH"
+        assert test_object.homepage == "http://www.test.test"
+
+    def test_office_info_mapping(self):
+        # read file
+        with open("replies/office_info.json", "r") as in_file:
+            data = in_file.read()
+        # parse json
+        json_data = json.loads(data)
+        # test
+        test_object = Company(json_data["office"])
+        assert test_object.id == "115876"
+        assert test_object.url == "https://www.presseportal.de/blaulicht/nr/115876"
+        assert test_object.name == "Feuerwehr Test"
+        assert test_object.homepage == "http://www.test.test"
 
 
 class TestErrors:

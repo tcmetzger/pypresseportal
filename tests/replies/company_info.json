@@ -1,0 +1,31 @@
+{
+    "success": "1",
+    "request": {
+        "uri": "https: //api.presseportal.de/api/info/company/100255?format=json",
+        "format": "json",
+        "company": "100255"
+    },
+    "company": {
+        "id": "100255",
+        "url": "https://www.presseportal.de/nr/100255",
+        "name": "Test GmbH",
+        "shortname": "Test",
+        "rss": "https://www.presseportal.de/rss/pm_100255.rss2",
+        "logo": "https://cache.pressmailing.net/thumbnail/big/a823902e-b040-45bc-ac67-f639146cd5a0/Logo_BI_BiMa_sRGB.jpg",
+        "web": [
+            {
+                "link": [
+                    {
+                        "title": "Test",
+                        "url": "http://www.test.test"
+                    },
+                    {
+                        "title": "Youtube-Kanal Test",
+                        "url": "http://www.test.test"
+                    }
+                ]
+            }
+        ],
+        "homepage": "http://www.test.test"
+    }
+}
