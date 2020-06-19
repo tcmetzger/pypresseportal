@@ -62,7 +62,7 @@ through the individual Story object's attributes.
 
 For example:
 
-    >>> stories[0].title
-    "Kohls Wohnhaus hat keinen Denkmalwert"
-    >>> stories[0].id
-    "4622388"
+>>> stories[0].title
+"Kohls Wohnhaus hat keinen Denkmalwert"
+>>> stories[0].id
+"4622388"
