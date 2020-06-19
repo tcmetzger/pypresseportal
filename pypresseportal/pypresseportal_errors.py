@@ -19,7 +19,7 @@ class ApiKeyError(Exception):
 
 
 class ApiDataError(Exception):
-    """Raised if the returned data is invalid.
+    """Raised if the API returned invalid data.
 
     Args:
         msg (str, optional): Custom error message. Defaults to None.

@@ -175,8 +175,6 @@ class Story:
             self.office_id = data["office"]["id"]
             self.office_url = data["office"]["url"]
             self.office_name = data["office"]["name"]
-        else:
-            raise ApiDataError("'company' or 'office' data not included in response.")
 
         # Check if keywords are present, map keywords
         if type(data["keywords"]) is dict and "keyword" in data["keywords"]:
@@ -347,22 +345,26 @@ class PresseportalApi:
 
         return stories_list
 
-    def parse_search_results(self, json_data: dict) -> List[Entity]:
-        """Parses json data into list of Entity objects.
+    def parse_search_results(self, json_data: dict) -> Union[List[Entity], None]:
+        """Parses search result data into list of Entity objects.
 
         Args:
             json_data (dict): Json data for parsing.
 
         Returns:
-            List[Story]: List of processed Entity objects.
+            Union[List[Entity], None]: Return list of processed Entity objects.
+            Return None if no results.
         
         :meta private:
         """
-        search_results_list = []
-        for item in json_data["content"]["result"]:
-            search_results_list.append(Entity(item))
 
-        return search_results_list
+        if "content" in json_data:
+            search_results_list = []
+            for item in json_data["content"]["result"]:
+                search_results_list.append(Entity(item))
+            return search_results_list
+        else:
+            return None
 
     def get_public_service_news(
         self, media: str = None, start: int = 0, limit: int = 50, teaser: bool = False,
@@ -401,6 +403,51 @@ class PresseportalApi:
 
         return stories_list
 
+    def get_public_service_specific_office(
+        self,
+        id: str,
+        media: str = None,
+        start: int = 0,
+        limit: int = 50,
+        teaser: bool = False,
+    ) -> List[Story]:
+        """Queries API for stories released by a specific public service office.
+
+        Returns a list of :class:`pypresseportal.Story` objects. More information: https://api.presseportal.de/doc/article/publicservice/office/id
+
+        Args:
+            id (str): id of office (read Entity.id of a :meth:`get_entity_search_results()` search for this id).
+            media (str, optional): Only request stories containing this specific media type (``image`` or ``document``). Defaults to None.
+            start (int, optional): Start/offset of the result article list. Defaults to 0.
+            limit (int, optional): Limit number of articles in response (API maximum is 50). Defaults to 50.
+            teaser (bool, optional): Returns stories with ``teaser`` instead of ``body`` (fulltext) if set to True. Defaults to False.
+
+        Raises:
+            ApiConnectionFail: Could not connect to API.
+            ApiError: API returned an error.
+            MediaError: API does not support the requested media type.
+
+        Returns:
+            List[Story]: List of Story objects
+        """
+
+        # Check if media type is supported by API
+        # Public service news allows only image or document
+        if media and media.lower() not in PUBLIC_SERVICE_MEDIA_TYPES:
+            raise MediaError(media, PUBLIC_SERVICE_MEDIA_TYPES)
+
+        # Set up query components
+        if type(id) is not str:
+            id = str(id)
+        base_url = f"https://api.presseportal.de/api/article/publicservice/office/{id}"
+        url, params, headers = self.build_request(base_url, media, start, limit, teaser)
+
+        # Query API and map results
+        json_data = self.get_data(url=url, params=params, headers=headers)
+        stories_list = self.parse_story_data(json_data)
+
+        return stories_list
+
     def get_public_service_specific_region(
         self,
         region_code: str,
@@ -409,13 +456,13 @@ class PresseportalApi:
         limit: int = 50,
         teaser: bool = False,
     ) -> List[Story]:
-        """Queries API for public service news from specific state.
+        """Queries API for stories by public service offices in a specific region.
 
         Returns a list of :class:`pypresseportal.Story` objects. List of region codes and more information: https://api.presseportal.de/doc/article/publicservice/region.
 
         Args:
             region_code (str): Only request stories located in this specific region. 
-            media (str, optional): Only request stories containing this specific media type (``image``, ``document``, ``audio`` or ``video``). Defaults to None.
+            media (str, optional): Only request stories containing this specific media type (``image`` or ``document``). Defaults to None.
             start (int, optional): Start/offset of the result article list. Defaults to 0.
             limit (int, optional): Limit number of articles in response (API maximum is 50). Defaults to 50.
             teaser (bool, optional): Returns stories with ``teaser`` instead of ``body`` (fulltext) if set to True. Defaults to False.
@@ -625,12 +672,60 @@ class PresseportalApi:
 
         return stories_list
 
+    def get_investor_relations_news_company(
+        self,
+        id: str,
+        news_type: str = "all",
+        start: int = 0,
+        limit: int = 50,
+        teaser: bool = False,
+    ) -> List[Story]:
+        """Queries API for investor relations press releases of a specific company.
+
+        Returns a list of :class:`pypresseportal.Story` objects. More information: https://api.presseportal.de/doc/ir/company/id/list
+
+        Args:
+            id (str): id of company (read Entity.id of a :meth:`get_entity_search_results()` search for this id).
+            news_type (str, optional): Investor relations news type (https://api.presseportal.de/doc/value/ir_type). Defaults to "all".
+            start (int, optional): Start/offset of the result article list. Defaults to 0.
+            limit (int, optional): Limit number of articles in response (API maximum is 50). Defaults to 50.
+            teaser (bool, optional): Returns stories with ``teaser`` instead of ``body`` (fulltext) if set to True. Defaults to False.
+
+        Raises:
+            ApiConnectionFail: Could not connect to API.
+            ApiError: API returned an error.
+            NewsTypeError: API does not support the requested news type.
+
+        Returns:
+            List[Story]: List of Story objects
+        """
+
+        # Check if investor relations news type is supported by API
+        if news_type.lower() not in INVESTOR_RELATIONS_NEWS_TYPES:
+            raise NewsTypeError(news_type, INVESTOR_RELATIONS_NEWS_TYPES)
+
+        # Set up query components
+        if type(id) is not str:
+            id = str(id)
+        base_url = (
+            f"https://api.presseportal.de/api/ir/company/{id}/{news_type.lower()}"
+        )
+        url, params, headers = self.build_request(
+            base_url=base_url, media=None, start=start, limit=limit, teaser=teaser
+        )
+
+        # Query API and map results
+        json_data = self.get_data(url=url, params=params, headers=headers)
+        stories_list = self.parse_story_data(json_data)
+
+        return stories_list
+
     def get_entity_search_results(
         self,
         search_term: Union[str, List[str]],
         entity: str = "company",
         limit: int = 20,
-    ) -> List[Entity]:
+    ) -> Union[List[Entity], None]:
         """Search for company or public service office by location or name.
 
         Returns a list of :class:`pypresseportal.Entity` objects. More information: https://api.presseportal.de/doc/search/company
@@ -647,7 +742,7 @@ class PresseportalApi:
             SearchEntityError: Api does not support the requested entity.
 
         Returns:
-            List[Entity]: List of Entity objects.
+            Union[List[Entity], None]: List of Entity objects. None if nothing found.
         """
 
         # Check search term
@@ -688,7 +783,7 @@ class PresseportalApi:
         Returns a :class:`pypresseportal.Company` object. More information: https://api.presseportal.de/doc/info/company/id
 
         Args:
-            id (str): id of company (for example by reading Entity.id of a :meth:`get_entity_search_results()` search).
+            id (str): id of company (read Entity.id of a :meth:`get_entity_search_results()` search for this id).
 
         Raises:
             ApiConnectionFail: Could not connect to API.
@@ -718,7 +813,7 @@ class PresseportalApi:
         Returns a :class:`pypresseportal.Office` object. More information: https://api.presseportal.de/doc/info/office/id
 
         Args:
-            id (str): id of office (for example by reading Entity.id of a :meth:`get_entity_search_results()` search).
+            id (str): id of office (read Entity.id of a :meth:`get_entity_search_results()` search for this id).
 
         Raises:
             ApiConnectionFail: Could not connect to API.

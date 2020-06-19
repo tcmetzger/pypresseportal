@@ -32,7 +32,7 @@ Scope of this document
 ----------------------
 This documentation describes how to use PyPresseportal to access data from `presseportal.de <htps://www.presseportal.de>`_ 
 in Python. You will learn how to install PyPresseportal, initialize the API with the :class:`pypresseportal.PresseportalApi` 
-class, and how to use PyPresseportal's various methods to search, request and parse data from the 
+class, and how to use PyPresseportal's various methods to search, request, and parse data from the 
 `presseportal.de <htps://www.presseportal.de>`_ API.
 
 

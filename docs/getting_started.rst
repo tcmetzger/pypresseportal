@@ -90,13 +90,19 @@ These are the methods supported by PyPresseportal:
     Search for company or public service office by location or name.
 
 * :meth:`pypresseportal.PresseportalApi.get_investor_relations_news()`: 
-    Return investor relations news (Ad Hoc news, Directors’ Dealings, reports, etc)
+    Return investor relations news (Ad Hoc news, Directors’ Dealings, reports, etc).
+
+* :meth:`pypresseportal.PresseportalApi.get_investor_relations_news_company()`:
+    Return investor relations news about a specific company.
 
 * :meth:`pypresseportal.PresseportalApi.get_public_service_news()`: 
-    Return stories released by public service offices (police and fire departments, etc)
+    Return stories released by public service offices (police and fire departments, etc).
 
 * :meth:`pypresseportal.PresseportalApi.get_public_service_office_information()`: 
     Return detailed info about a specific public service office based on id.
+
+* :meth:`pypresseportal.PresseportalApi.get_public_service_specific_office()`:
+    Return stories released by a specific public service office.
 
 * :meth:`pypresseportal.PresseportalApi.get_public_service_specific_region()`: 
     Return stories released by public service offices in a specific geographical region (`list of regions <https://api.presseportal.de/en/doc/value/region>`_).
