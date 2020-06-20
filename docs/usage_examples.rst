@@ -10,8 +10,8 @@ featuring some of the functionalities of the library. However, PyPresseportal ha
 several additional functions that are not part of these examples. You can find more
 information about all available classes, methods, and attributes in the :doc:`pypresseportal`.
 
-Police and fire department press releases for a specific state
---------------------------------------------------------------
+Police and fire department press releases from a specific state
+---------------------------------------------------------------
 
 Use the ``get_public_service_specific_region()`` method to request press releases from public 
 service offices in a specific region. 
@@ -69,7 +69,7 @@ Combine the methods ``get_entity_search_results()`` and ``get_public_service_spe
 to access all available public service office press releases for a specific city.
 
 First, initialize the API and search for all available offices in a city. Use the argument
-``entity='office`` to search for public service offices. Use the argument ``search_term`` to
+``entity='office'`` to search for public service offices. Use the argument ``search_term`` to
 pass the city you are searching for, for example "Dortmund":
 
 >>> from pypresseportal import PresseportalApi

@@ -194,10 +194,11 @@ class Story:
 class PresseportalApi:
     """A Python interface into the presseportal.de API.
 
-    Presseportal is a service provided by 'news aktuell', owned by dpa
+    Presseportal.de is a service provided by 'news aktuell', owned by dpa
     (Deutsche Presse Agentur). An API key from presseportal.de is required.
     You can find more information and apply for an API key at
-    https://api.presseportal.de/en.
+    https://api.presseportal.de/en. The documentation for PyPresseportal is at
+    https://pypresseportal.readthedocs.io/.
 
     First, create an instance of the ``PresseportalApi`` class, using your API key:
 

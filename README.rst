@@ -31,8 +31,8 @@ Documentation is available at `<https://pypresseportal.readthedocs.io>`_.
 Quickstart
 ----------
 
-Installing with ``pip``
-***********************
+1. Installing with ``pip``
+**************************
 
 Use ``pip`` on a command line to download PyPresseportal from PyPI and install it on your system:
 
@@ -40,14 +40,14 @@ Use ``pip`` on a command line to download PyPresseportal from PyPI and install i
 
     $ pip install pypresseportal
 
-Getting an API key
-******************
+2. Getting an API key
+*********************
 
 PyPresseportal requires a valid API key from `<https://api.presseportal.de/en>`_. This website is
 also where you can find general information on the API as well as the API's Terms.
 
-Initializing the API
-********************
+3. Initializing the API
+***********************
 
 First, create an instance of the ``PresseportalApi`` class, 
 using your API key:
@@ -55,8 +55,8 @@ using your API key:
 >>> from pypresseportal import PresseportalApi
 >>> api_object = PresseportalApi(YOUR_API_KEY)
 
-Requesting data
-***************
+4. Requesting data
+******************
 
 Next, request data from the API through the ``PresseportalApi`` class. It
 contains several methods to access API data, all of which work very similarly.
