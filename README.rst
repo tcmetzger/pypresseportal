@@ -1,3 +1,11 @@
+.. image:: https://readthedocs.org/projects/pypresseportal/badge/?version=latest
+  :target: https://pypresseportal.readthedocs.io/en/latest/?badge=latest
+  :alt: Documentation Status
+
+.. image:: https://img.shields.io/badge/License-MIT-yellow.svg
+  :target: https://opensource.org/licenses/MIT
+  :alt: License: MIT
+
 PyPresseportal
 ==============
 
@@ -13,10 +21,16 @@ PyPresseportal is in no way connected to presseportal.de,
 library.
 
 An API key from presseportal.de is required to access data. You can find more
-information and apply for an API key at https://api.presseportal.de/en.
+information and apply for an API key at `<https://api.presseportal.de/en>`_.
+
+Documentation
+-------------
+
+Documentation is available at `<https://pypresseportal.readthedocs.io>`_.
 
 Quickstart
 ----------
+
 Installing with ``pip``
 ***********************
 
