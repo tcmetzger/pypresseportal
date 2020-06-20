@@ -241,22 +241,6 @@ class PresseportalApi:
         teaser: Union[bool, None] = None,
         search_term: Union[str, None] = None,
     ) -> Tuple[str, Dict[str, str], Dict[str, str]]:
-        """Assembles the request components to be passed on to requests.get()
-
-        Args:
-            base_url (str): Base URL for request.
-            media (Union[str, None], optional): Specific media type. Defaults to None.
-            start (Union[int, None], optional): Start offset. Defaults to None.
-            limit (Union[int, None], optional): Maximum amount of results. Defaults to None.
-            teaser (Union[bool, None], optional): Request teaser or body. Defaults to None.
-            search_term (Union[str, None], optional): Search term. Defaults to None.
-
-        Returns:
-            Tuple[str, Dict[str, str], Dict[str, str]]: url, params and headers for requests.get().
-
-        :meta private:
-        """
-
         # Set up url and append media type, if required
         url = base_url
         if media:
@@ -284,23 +268,6 @@ class PresseportalApi:
         return url, params, headers
 
     def get_data(self, url: str, params: dict, headers: dict) -> dict:
-        """Connects to API and maps raw data into objects.
-
-        Args:
-            url (str): URL for query.
-            params (dict): Parameters for query.
-            headers (dict): Headers for query.
-
-        Raises:
-            ApiConnectionFail: Could not connect to API.
-            NotImplementedError: Unknown error.
-            ApiError: API returned an error.
-
-        Returns:
-            List[Story]: List of Story objects.
-
-        :meta private:
-        """
         #######################Disable for testing ##############
         try:
             request = requests.get(url=url, params=params, headers=headers)
@@ -320,7 +287,6 @@ class PresseportalApi:
         # # parse file
         # json_data = json.loads(data)
         #########################################################
-
         # Raise error if API does not report success
         if "error" in json_data:
             error_code = json_data["error"]["code"]
@@ -332,34 +298,13 @@ class PresseportalApi:
     def is_media_valid(
         self, media: Union[str, None], allowed_media_type: tuple = MEDIA_TYPES
     ) -> bool:
-        """Check if media type is supported by API.
 
-        Args:
-            media (str): media type to check.
-            allowed_media_type (tuple, optional): Collection of media types to check against. Defaults to MEDIA_TYPES.
-
-        Raises:
-            MediaError: API does not support the requested media type.
-
-        Returns:
-            bool: True if media is valid
-        """
         if media and media.lower() not in allowed_media_type:
             raise MediaError(media, allowed_media_type)
         else:
             return True
 
     def parse_story_data(self, json_data: dict) -> List[Story]:
-        """Parses json data into list of Story objects.
-
-        Args:
-            json_data (dict): Json data for parsing.
-
-        Returns:
-            List[Story]: List of processed Story objects.
-        
-        :meta private:
-        """
         stories_list = []
         for item in json_data["content"]["story"]:
             stories_list.append(Story(item))
@@ -367,18 +312,6 @@ class PresseportalApi:
         return stories_list
 
     def parse_search_results(self, json_data: dict) -> Union[List[Entity], None]:
-        """Parses search result data into list of Entity objects.
-
-        Args:
-            json_data (dict): Json data for parsing.
-
-        Returns:
-            Union[List[Entity], None]: Return list of processed Entity objects.
-            Return None if no results.
-        
-        :meta private:
-        """
-
         if "content" in json_data:
             search_results_list = []
             for item in json_data["content"]["result"]:
