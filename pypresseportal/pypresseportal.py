@@ -328,6 +328,26 @@ class PresseportalApi:
 
         return json_data
 
+    def is_media_valid(
+        self, media: Union[str, None], allowed_media_type: tuple = MEDIA_TYPES
+    ) -> bool:
+        """Check if media type is supported by API.
+
+        Args:
+            media (str): media type to check.
+            allowed_media_type (tuple, optional): Collection of media types to check against. Defaults to MEDIA_TYPES.
+
+        Raises:
+            MediaError: API does not support the requested media type.
+
+        Returns:
+            bool: True if media is valid
+        """
+        if media and media.lower() not in allowed_media_type:
+            raise MediaError(media, allowed_media_type)
+        else:
+            return True
+
     def parse_story_data(self, json_data: dict) -> List[Story]:
         """Parses json data into list of Story objects.
 
@@ -388,18 +408,18 @@ class PresseportalApi:
             List[Story]: List of Story objects
         """
 
-        # Check if media type is supported by API
-        # Public service news allows only image or document
-        if media and media.lower() not in PUBLIC_SERVICE_MEDIA_TYPES:
-            raise MediaError(media, PUBLIC_SERVICE_MEDIA_TYPES)
+        if self.is_media_valid(media, PUBLIC_SERVICE_MEDIA_TYPES):
+            # Set up query components
+            base_url = "https://api.presseportal.de/api/article/publicservice"
+            url, params, headers = self.build_request(
+                base_url, media, start, limit, teaser
+            )
 
-        # Set up query components
-        base_url = "https://api.presseportal.de/api/article/publicservice"
-        url, params, headers = self.build_request(base_url, media, start, limit, teaser)
-
-        # Query API and map results
-        json_data = self.get_data(url=url, params=params, headers=headers)
-        stories_list = self.parse_story_data(json_data)
+            # Query API and map results
+            json_data = self.get_data(url=url, params=params, headers=headers)
+            stories_list = self.parse_story_data(json_data)
+        else:
+            stories_list = []
 
         return stories_list
 
@@ -430,21 +450,22 @@ class PresseportalApi:
         Returns:
             List[Story]: List of Story objects
         """
+        if self.is_media_valid(media, PUBLIC_SERVICE_MEDIA_TYPES):
+            # Set up query components
+            if type(id) is not str:
+                id = str(id)
+            base_url = (
+                f"https://api.presseportal.de/api/article/publicservice/office/{id}"
+            )
+            url, params, headers = self.build_request(
+                base_url, media, start, limit, teaser
+            )
 
-        # Check if media type is supported by API
-        # Public service news allows only image or document
-        if media and media.lower() not in PUBLIC_SERVICE_MEDIA_TYPES:
-            raise MediaError(media, PUBLIC_SERVICE_MEDIA_TYPES)
-
-        # Set up query components
-        if type(id) is not str:
-            id = str(id)
-        base_url = f"https://api.presseportal.de/api/article/publicservice/office/{id}"
-        url, params, headers = self.build_request(base_url, media, start, limit, teaser)
-
-        # Query API and map results
-        json_data = self.get_data(url=url, params=params, headers=headers)
-        stories_list = self.parse_story_data(json_data)
+            # Query API and map results
+            json_data = self.get_data(url=url, params=params, headers=headers)
+            stories_list = self.parse_story_data(json_data)
+        else:
+            stories_list = []
 
         return stories_list
 
@@ -476,23 +497,22 @@ class PresseportalApi:
         Returns:
             List[Story]: List of Story objects
         """
-
-        # Check if media type is supported by API
-        # Public service news allows only image or document
-        if media and media.lower() not in PUBLIC_SERVICE_MEDIA_TYPES:
-            raise MediaError(media, PUBLIC_SERVICE_MEDIA_TYPES)
-
         # Check if region is supported by API
         if region_code not in PUBLIC_SERVICE_REGIONS:
             raise RegionError(region_code, PUBLIC_SERVICE_REGIONS)
 
-        # Set up query components
-        base_url = f"https://api.presseportal.de/api/article/publicservice/region/{region_code}"
-        url, params, headers = self.build_request(base_url, media, start, limit, teaser)
+        if self.is_media_valid(media, PUBLIC_SERVICE_MEDIA_TYPES):
+            # Set up query components
+            base_url = f"https://api.presseportal.de/api/article/publicservice/region/{region_code}"
+            url, params, headers = self.build_request(
+                base_url, media, start, limit, teaser
+            )
 
-        # Query API and map results
-        json_data = self.get_data(url=url, params=params, headers=headers)
-        stories_list = self.parse_story_data(json_data)
+            # Query API and map results
+            json_data = self.get_data(url=url, params=params, headers=headers)
+            stories_list = self.parse_story_data(json_data)
+        else:
+            stories_list = []
 
         return stories_list
 
@@ -517,18 +537,17 @@ class PresseportalApi:
         Returns:
             List[Story]: List of Story objects
         """
-
-        # Check if media type is supported by API
-        if media and media.lower() not in MEDIA_TYPES:
-            raise MediaError(media, MEDIA_TYPES)
-
-        # Set up query components
-        base_url = "https://api.presseportal.de/api/article/all"
-        url, params, headers = self.build_request(base_url, media, start, limit, teaser)
-
-        # Query API and map results
-        json_data = self.get_data(url=url, params=params, headers=headers)
-        stories_list = self.parse_story_data(json_data)
+        if self.is_media_valid(media):
+            # Set up query components
+            base_url = "https://api.presseportal.de/api/article/all"
+            url, params, headers = self.build_request(
+                base_url, media, start, limit, teaser
+            )
+            # Query API and map results
+            json_data = self.get_data(url=url, params=params, headers=headers)
+            stories_list = self.parse_story_data(json_data)
+        else:
+            stories_list = []
 
         return stories_list
 
@@ -559,22 +578,20 @@ class PresseportalApi:
         Returns:
             List[Story]: List of Story objects
         """
+        if self.is_media_valid(media):
+            # Set up query components
+            if type(id) is not str:
+                id = str(id)
+            base_url = f"https://api.presseportal.de/api/article/company/{id}"
+            url, params, headers = self.build_request(
+                base_url, media, start, limit, teaser
+            )
 
-        # Check if media type is supported by API
-        if media and media.lower() not in MEDIA_TYPES:
-            raise MediaError(media, MEDIA_TYPES)
-
-        # Set up query components
-        if type(id) is not str:
-            id = str(id)
-        base_url = f"https://api.presseportal.de/api/article/company/{id}"
-        url, params, headers = self.build_request(
-            base_url=base_url, media=None, start=start, limit=limit, teaser=teaser
-        )
-
-        # Query API and map results
-        json_data = self.get_data(url=url, params=params, headers=headers)
-        stories_list = self.parse_story_data(json_data)
+            # Query API and map results
+            json_data = self.get_data(url=url, params=params, headers=headers)
+            stories_list = self.parse_story_data(json_data)
+        else:
+            stories_list = []
 
         return stories_list
 
@@ -606,22 +623,22 @@ class PresseportalApi:
         Returns:
             List[Story]: List of Story objects
         """
-
-        # Check if media type is supported by API
-        if media and media.lower() not in MEDIA_TYPES:
-            raise MediaError(media, MEDIA_TYPES)
-
         # Check if topic is supported by API
         if topic not in TOPICS:
             raise TopicError(topic, TOPICS)
 
-        # Set up query components
-        base_url = f"https://api.presseportal.de/api/article/topic/{topic}"
-        url, params, headers = self.build_request(base_url, media, start, limit, teaser)
+        if self.is_media_valid(media):
+            # Set up query components
+            base_url = f"https://api.presseportal.de/api/article/topic/{topic}"
+            url, params, headers = self.build_request(
+                base_url, media, start, limit, teaser
+            )
 
-        # Query API and map results
-        json_data = self.get_data(url=url, params=params, headers=headers)
-        stories_list = self.parse_story_data(json_data)
+            # Query API and map results
+            json_data = self.get_data(url=url, params=params, headers=headers)
+            stories_list = self.parse_story_data(json_data)
+        else:
+            stories_list = []
 
         return stories_list
 
@@ -653,11 +670,6 @@ class PresseportalApi:
         Returns:
             List[Story]: List of Story objects
         """
-
-        # Check if media type is supported by API
-        if media and media.lower() not in MEDIA_TYPES:
-            raise MediaError(media, MEDIA_TYPES)
-
         # Check if keywords are supported by API
         for keyword in keywords:
             if keyword not in KEYWORDS:
@@ -666,13 +678,18 @@ class PresseportalApi:
         # Construct keyword string
         keywords_str = ",".join(keywords)
 
-        # Set up query components
-        base_url = f"https://api.presseportal.de/api/article/keyword/{keywords_str}"
-        url, params, headers = self.build_request(base_url, media, start, limit, teaser)
+        if self.is_media_valid(media):
+            # Set up query components
+            base_url = f"https://api.presseportal.de/api/article/keyword/{keywords_str}"
+            url, params, headers = self.build_request(
+                base_url, media, start, limit, teaser
+            )
 
-        # Query API and map results
-        json_data = self.get_data(url=url, params=params, headers=headers)
-        stories_list = self.parse_story_data(json_data)
+            # Query API and map results
+            json_data = self.get_data(url=url, params=params, headers=headers)
+            stories_list = self.parse_story_data(json_data)
+        else:
+            stories_list = []
 
         return stories_list
 
