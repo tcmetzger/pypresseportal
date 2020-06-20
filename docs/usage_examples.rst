@@ -135,7 +135,7 @@ companies matching your search string. Note that ``get_entity_search_results()``
 (...)
 
 Finally, pick the id of the company you were looking for and pass it to 
-``get_stories_specific_company()``, using the attribute ``.id`` :
+``get_stories_specific_company()``, using the attribute ``id`` :
 
 >>> company_stories = api_object.get_stories_specific_company(id=search_results[0].id)
 >>> for story in company_stories:
