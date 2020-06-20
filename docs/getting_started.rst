@@ -84,37 +84,37 @@ about PyPresseportal is available in the :doc:`pypresseportal`.
 These are the methods supported by PyPresseportal:
 
 * :meth:`pypresseportal.PresseportalApi.get_company_information()`: 
-    Return detailed info about a specific company based on id.
+    Return detailed info about a specific company (requires company id).
 
 * :meth:`pypresseportal.PresseportalApi.get_entity_search_results()`: 
-    Search for company or public service office by location or name.
+    Search for company or public service office by location or name (provides company/office id).
 
 * :meth:`pypresseportal.PresseportalApi.get_investor_relations_news()`: 
     Return investor relations news (Ad Hoc news, Directors’ Dealings, reports, etc).
 
 * :meth:`pypresseportal.PresseportalApi.get_investor_relations_news_company()`:
-    Return investor relations news about a specific company.
+    Return investor relations news about a specific company (requires company id).
 
 * :meth:`pypresseportal.PresseportalApi.get_public_service_news()`: 
     Return stories released by public service offices (police and fire departments, etc).
 
 * :meth:`pypresseportal.PresseportalApi.get_public_service_office_information()`: 
-    Return detailed info about a specific public service office based on id.
+    Return detailed info about a specific public service office (requires office id).
 
 * :meth:`pypresseportal.PresseportalApi.get_public_service_specific_office()`:
-    Return stories released by a specific public service office.
+    Return stories released by a specific public service office (requires office id).
 
 * :meth:`pypresseportal.PresseportalApi.get_public_service_specific_region()`: 
     Return stories released by public service offices in a specific geographical region (`list of regions <https://api.presseportal.de/en/doc/value/region>`_).
 
 * :meth:`pypresseportal.PresseportalApi.get_stories_specific_company()`:
-    Return stories released by a specific company.
+    Return stories released by a specific company (requires company id).
 
 * :meth:`pypresseportal.PresseportalApi.get_stories_keywords()`: 
-    Return stories assigned to a specific topic (`list of topics <https://api.presseportal.de/en/doc/value/topic>`_).
+    Return stories assigned to specific keywords (`list of keywords <https://api.presseportal.de/en/doc/value/keyword>`_).
 
 * :meth:`pypresseportal.PresseportalApi.get_stories_topic()`: 
-    Return stories assigned to specific keywords (`list of keywords <https://api.presseportal.de/en/doc/value/keyword>`_).
+    Return stories assigned to a specific topic (`list of topics <https://api.presseportal.de/en/doc/value/topic>`_).
 
 * :meth:`pypresseportal.PresseportalApi.get_stories()`: 
     Return recently published stories.
