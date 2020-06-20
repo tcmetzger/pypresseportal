@@ -532,6 +532,52 @@ class PresseportalApi:
 
         return stories_list
 
+    def get_stories_specific_company(
+        self,
+        id: str,
+        media: str = None,
+        start: int = 0,
+        limit: int = 50,
+        teaser: bool = False,
+    ) -> List[Story]:
+        """Queries API for press releases of a specific company.
+
+        Returns a list of :class:`pypresseportal.Story` objects. More information: https://api.presseportal.de/en/doc/article/company/id
+
+        Args:
+            id (str): id of company (read Entity.id of a :meth:`get_entity_search_results()` search for this id).
+            media (str, optional): Only request stories containing this specific media type (``image``, ``document``, ``audio`` or ``video``). Defaults to None.
+            start (int, optional): Start/offset of the result article list. Defaults to 0.
+            limit (int, optional): Limit number of articles in response (API maximum is 50). Defaults to 50.
+            teaser (bool, optional): Returns stories with ``teaser`` instead of ``body`` (fulltext) if set to True. Defaults to False.
+
+        Raises:
+            ApiConnectionFail: Could not connect to API.
+            ApiError: API returned an error.
+            MediaError: API does not support the requested media type.
+
+        Returns:
+            List[Story]: List of Story objects
+        """
+
+        # Check if media type is supported by API
+        if media and media.lower() not in MEDIA_TYPES:
+            raise MediaError(media, MEDIA_TYPES)
+
+        # Set up query components
+        if type(id) is not str:
+            id = str(id)
+        base_url = f"https://api.presseportal.de/api/article/company/{id}"
+        url, params, headers = self.build_request(
+            base_url=base_url, media=None, start=start, limit=limit, teaser=teaser
+        )
+
+        # Query API and map results
+        json_data = self.get_data(url=url, params=params, headers=headers)
+        stories_list = self.parse_story_data(json_data)
+
+        return stories_list
+
     def get_stories_topic(
         self,
         topic: str,

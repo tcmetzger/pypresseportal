@@ -107,6 +107,9 @@ These are the methods supported by PyPresseportal:
 * :meth:`pypresseportal.PresseportalApi.get_public_service_specific_region()`: 
     Return stories released by public service offices in a specific geographical region (`list of regions <https://api.presseportal.de/en/doc/value/region>`_).
 
+* :meth:`pypresseportal.PresseportalApi.get_stories_specific_company()`:
+    Return stories released by a specific company.
+
 * :meth:`pypresseportal.PresseportalApi.get_stories_keywords()`: 
     Return stories assigned to a specific topic (`list of topics <https://api.presseportal.de/en/doc/value/topic>`_).
 
