@@ -108,7 +108,7 @@ class Office:
 
 
 class Story:
-    """Represents a story retrieved from the API.
+    """Represents a story retrieved through the API.
 
     See original API documentation for details (https://api.presseportal.de/en/doc/format/story).
 
@@ -194,7 +194,7 @@ class Story:
 class PresseportalApi:
     """A Python interface into the presseportal.de API.
 
-    Presseportal.de is a service provided by 'news aktuell', owned by dpa
+    The website presseportal.de is a service provided by 'news aktuell', owned by dpa
     (Deutsche Presse Agentur). An API key from presseportal.de is required.
     You can find more information and apply for an API key at
     https://api.presseportal.de/en. The documentation for PyPresseportal is at
