@@ -17,7 +17,7 @@ Use the ``get_public_service_specific_region()`` method to request press release
 service offices in a specific region. 
 
 First, this method requires a ``region_code`` argument, as defined
-in this list: `<https://api.presseportal.de/en/doc/value/region>`_. For example, 'by' is the 
+in this list: `<https://api.presseportal.de/en/doc/value/region>`_. For example, ``"by"`` is the 
 region code for Bavaria:
 
 >>> from pypresseportal import PresseportalApi
@@ -54,7 +54,8 @@ This code requests the 10 most recent news stories featuring an image, by passin
 >>> api_object = PresseportalApi(YOUR_API_KEY)
 >>> stories_with_image = api_object.get_stories(media="image", limit=10)
 
-Read the relevant attributes for each story, including json data about the attached media file:
+Read the relevant attributes for each story, such as ``.image`` which contains json data 
+about image media files that are part of the story:
 
 >>> for story in stories_with_image:
 >>>     print(story.title)
@@ -84,7 +85,7 @@ Three public service offices are available in Dortmund:
 115869 Feuerwehr Dortmund
 121242 Hauptzollamt Dortmund
 
-Next, store the offices' ids in a list:
+Next, store the offices' ``.id`` attributes in a list:
 
 >>> local_office_ids = []
 >>> for data in search_results:
@@ -121,7 +122,7 @@ database for any results matching the company you are looking for. For example t
 
 Next, inspect the search results. ``get_entity_search_results()`` returns a list of all
 companies matching your search string. Note that ``get_entity_search_results()`` will return 
-None if the API did not find any matching entries, so make sure to check first:
+``None`` if the API did not find any matching entries, so make sure to check first:
 
 >>> if search_results:  # Check if search yielded any results
 >>>     for company in search_results:
@@ -134,7 +135,7 @@ None if the API did not find any matching entries, so make sure to check first:
 (...)
 
 Finally, pick the id of the company you were looking for and pass it to 
-``get_stories_specific_company()``, using the attribute ``id`` :
+``get_stories_specific_company()``, using the attribute ``.id`` :
 
 >>> company_stories = api_object.get_stories_specific_company(id=search_results[0].id)
 >>> for story in company_stories:
@@ -160,7 +161,7 @@ database for any results matching the company you are looking for. For example t
 
 Next, inspect the search results. ``get_entity_search_results()`` returns a list of all
 companies matching your search string. Note that ``get_entity_search_results()`` will return 
-None if the API did not find any matching entries, so make sure to check first:
+``None`` if the API did not find any matching entries, so make sure to check first:
 
 >>> if search_results:  # Check if search yielded any results
 >>>     for company in search_results:

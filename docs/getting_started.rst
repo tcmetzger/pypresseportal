@@ -14,7 +14,7 @@ Follow these steps to set up PyPresseportal and retrieve data from `presseportal
 
 PyPresseportal requires a valid API key from `presseportal.de <https://api.presseportal.de/en>`_.
 You can request an API key on this website: `<https://api.presseportal.de/en>`_. This website is
-also where you can find general information on the API as well as the API's Terms.
+also where you can find general information on the API, as well as the API's Terms.
 
 2. Initializing the API
 -----------------------
@@ -28,9 +28,9 @@ using your API key::
 3. Requesting data from the API
 -------------------------------
 
-Next, request data from the API through the ``PresseportalApi`` class. It
-contains several methods to access API data, all of which work very similarly. The 
-:doc:`pypresseportal` explains all available methods in detail.
+Next, request data from the API through the ``PresseportalApi`` class. This class 
+offers several methods to access API data. The :doc:`pypresseportal` explains all 
+available methods in detail.
 
 The easiest way to access the most recently published stories is the 
 ``get_stories()`` method. If you do not provide any arguments to this method, 
