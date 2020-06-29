@@ -68,6 +68,7 @@ class TestFunctions:
         assert test_object.office_id == "12345"
         assert test_object.image[0]["name"] == "test.jpg"
 
+
     @responses.activate
     def test_search_results_mapping(self):
 
