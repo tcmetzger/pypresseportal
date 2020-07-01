@@ -82,7 +82,7 @@ def get_og_tags(context, doctree, config):
     # Add image if present, use default image if no image is found
     if og_image:
         tags += f'<meta property="og:image" content="{og_image}">'
-    else:
+    elif config.og_fallback_image:
         tags += f'<meta property="og:image" content="{config.og_fallback_image}">'
     return tags
 
