@@ -55,7 +55,7 @@ class Visitor:
 
 def get_og_tags(context, doctree, config):
     # page_url
-    site_url = config["og_site_url"]
+    site_url = config.og_site_url
     page_url = urljoin(site_url, context["pagename"] + context["file_suffix"])
 
     # collection
@@ -79,8 +79,11 @@ def get_og_tags(context, doctree, config):
     """.format(
         ctx=context, desc=og_desc, page_url=page_url, cfg=config
     )
+    # Add image if present, use default image if no image is found
     if og_image:
         tags += f'<meta property="og:image" content="{og_image}">'
+    else:
+        tags += f'<meta property="og:image" content="{config.og_fallback_image}">'
     return tags
 
 
@@ -94,6 +97,7 @@ def html_page_context(app, pagename, templatename, context, doctree):
 def setup(app):
     app.add_config_value("og_site_url", None, "html")
     app.add_config_value("og_twitter_site", None, "html")
+    app.add_config_value("og_fallback_image", None, "html")
     app.connect("html-page-context", html_page_context)
     return {
         "version": "0.1",

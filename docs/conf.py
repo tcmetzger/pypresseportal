@@ -59,6 +59,7 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 # Constants for _ext/ogtag.py extension
 og_site_url = "https://pypresseportal.readthedocs.io/en/latest/"
 og_twitter_site = "@tcmetzger"
+og_fallback_image = "https://www.tcmetzger.de/STATIC/pypresseportal_default.png"
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
