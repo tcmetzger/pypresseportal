@@ -1,0 +1,27 @@
+dist: xenial
+language: python
+sudo: false
+python:
+  - "3.6"
+  - "3.7"
+  - "3.8"
+
+install:
+  - pip install -U -r requirements/requirements.txt
+  - pip install -U -r requirements/test_requirements.txt
+  - pip install -e .
+
+# command to run tests, e.g. python setup.py test
+script:
+  - pytest . --cov-report term-missing  --cov pypresseportal tests/
+
+# deploy:
+#   provider: pypi
+#   distributions: "sdist bdist_wheel"
+#   username: "hanneshapke"
+#   on:
+#     tags: true
+#     # branch: master
+
+after_success:
+  - coveralls
