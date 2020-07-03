@@ -26,9 +26,9 @@ class ApiDataError(Exception):
     """
 
     def __init__(self, msg: str = None):
-        self.message = (
-            f"The API returned invalid data or data could not be processed. {msg}"
-        )
+        self.message = "The API returned invalid data or data could not be processed."
+        if msg:
+            self.message += f" {msg}"
         super().__init__(self.message)
 
 

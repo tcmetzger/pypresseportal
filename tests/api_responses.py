@@ -2,18 +2,27 @@ import os
 import responses
 
 
-DEEP_SEARCH_URL = "http://www.zillow.com/webservice/GetDeepSearchResults.htm"
-PROPERTY_DETAIL_URL = "http://www.zillow.com/webservice/GetUpdatedPropertyDetails.htm"
-
 JSON_RESPONSE = {
-    "story_mapping": {
+    "get_stories": {
         "url": "https://api.presseportal.de/api/article/all?api_key=NO_KEY_NEEDED_DUE_TO_MOCKING_API&format=json&start=0&limit=50&teaser=0",
-        "file": "get_public_service_news.json"
+        "file": "get_stories.json"
     },
-    "entity_search": {
+    "empty_json": {
         "url": "https://api.presseportal.de/api/article/all?api_key=NO_KEY_NEEDED_DUE_TO_MOCKING_API&format=json&start=0&limit=50&teaser=0",
-        "file": "entity_search.json"
+        "file": "empty_json.json"
     },
+    "authentification_failed_error": {
+        "url": "https://api.presseportal.de/api/article/all?api_key=NO_KEY_NEEDED_DUE_TO_MOCKING_API&format=json&start=0&limit=50&teaser=0",
+        "file": "authentification_failed_error.json"
+    },
+    # "story_mapping": {
+    #     "url": "https://api.presseportal.de/api/article/all?api_key=NO_KEY_NEEDED_DUE_TO_MOCKING_API&format=json&start=0&limit=50&teaser=0",
+    #     "file": "get_public_service_news.json"
+    # },
+    # "entity_search": {
+    #     "url": "https://api.presseportal.de/api/article/all?api_key=NO_KEY_NEEDED_DUE_TO_MOCKING_API&format=json&start=0&limit=50&teaser=0",
+    #     "file": "entity_search.json"
+    # },
 }
 
 
@@ -26,7 +35,7 @@ class APIReponses(object):
             content = content_file.read()
         return data["url"], content
 
-    def get(self, key):
+    def set_mock_response(self, key):
         url, content = self.load_response(key)
         responses.add(
             responses.GET,
