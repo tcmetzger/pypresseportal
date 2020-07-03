@@ -18,7 +18,7 @@ from pypresseportal.pypresseportal_errors import (
     SearchTermError,
 )
 
-API_KEY = os.environ["API_KEY"]
+API_KEY = os.environ.get("API_KEY", "NO_KEY_PRESENT")
 api_object = PresseportalApi(API_KEY)
 
 
