@@ -293,6 +293,9 @@ class PresseportalApi:
             error_msg = json_data["error"]["msg"]
             raise ApiError(error_code, error_msg)
 
+        if "content" not in json_data:
+            raise ApiDataError()
+
         return json_data
 
     def is_media_valid(
@@ -300,9 +303,9 @@ class PresseportalApi:
     ) -> bool:
 
         if media and media.lower() not in allowed_media_type:
-            raise MediaError(media, allowed_media_type)
-        else:
-            return True
+            # raise MediaError(media, allowed_media_type)
+            return False
+        return True
 
     def parse_story_data(self, json_data: dict) -> List[Story]:
         stories_list = []
@@ -342,20 +345,15 @@ class PresseportalApi:
             List[Story]: List of Story objects
         """
 
-        if self.is_media_valid(media, PUBLIC_SERVICE_MEDIA_TYPES):
-            # Set up query components
-            base_url = "https://api.presseportal.de/api/article/publicservice"
-            url, params, headers = self.build_request(
-                base_url, media, start, limit, teaser
-            )
+        if not self.is_media_valid(media, PUBLIC_SERVICE_MEDIA_TYPES):
+            return []
+        # Set up query components
+        base_url = "https://api.presseportal.de/api/article/publicservice"
+        url, params, headers = self.build_request(base_url, media, start, limit, teaser)
 
-            # Query API and map results
-            json_data = self.get_data(url=url, params=params, headers=headers)
-            stories_list = self.parse_story_data(json_data)
-        else:
-            stories_list = []
-
-        return stories_list
+        # Query API and map results
+        json_data = self.get_data(url=url, params=params, headers=headers)
+        return self.parse_story_data(json_data)
 
     def get_public_service_specific_office(
         self,

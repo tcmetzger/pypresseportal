@@ -1,0 +1,48 @@
+{
+    "success": "1",
+    "request": {
+        "uri": "https://api.presseportal.de/api/article/all?format=json&amp;start=0&amp;limit=1&amp;teaser=0",
+        "start": "0",
+        "limit": "1",
+        "format": "json"
+    },
+    "content": {
+        "story": [
+            {
+                "id": "1234567",
+                "url": "https://www.presseportal.de/pm/1658/4640344",
+                "title": "Test Title",
+                "body": "Test body, full text.",
+                "published": "2020-07-02T04:30:00+0200",
+                "language": "de",
+                "ressort": "vermischtes",
+                "company": {
+                    "id": "1234",
+                    "url": "https://www.presseportal.de/nr/1234",
+                    "name": "Test Company"
+                },
+                "keywords": {
+                    "keyword": [
+                        "Umwelt",
+                        "Klimaschutz"
+                    ]
+                },
+                "media": {
+                    "image": [
+                        {
+                            "id": "123456",
+                            "url": "https://cache.pressmailing.net/thumbnail/story_big/test_image_url.jpg",
+                            "name": "test_image_url.jpg",
+                            "size": "1234",
+                            "mime": "image/jpeg",
+                            "type": "image",
+                            "caption": "Test caption"
+                        }
+                    ]
+                },
+                "highlight": "0",
+                "short": "http://ots.de/1234"
+            }
+        ]
+    }
+}
