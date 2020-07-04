@@ -35,6 +35,8 @@ Documentation is available at `<https://pypresseportal.readthedocs.io>`_.
 Quickstart
 ----------
 
+PyPresseportal requires at least Python 3.6 to run.
+
 1. Installing with ``pip``
 **************************
 
