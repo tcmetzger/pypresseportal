@@ -2,6 +2,10 @@
   :target: https://pypresseportal.readthedocs.io/en/latest/?badge=latest
   :alt: Documentation Status
 
+.. image:: https://travis-ci.com/tcmetzger/pypresseportal.svg?branch=master
+  :target: https://travis-ci.com/tcmetzger/pypresseportal
+  :alt: Travis CI Build Status
+
 .. image:: https://img.shields.io/badge/License-MIT-yellow.svg
   :target: https://opensource.org/licenses/MIT
   :alt: License: MIT
@@ -16,8 +20,8 @@ The website presseportal.de is a service provided by 'news aktuell', owned by dp
 and investor relations announcements in Germany. For example, almost all police and fire 
 departments use this service to distribute their press releases.
 
-PyPresseportal is in no way connected to presseportal.de, 
-'news aktuell' or dpa. PyPresseportal is independently developed by volunteers as an Open Source 
+PyPresseportal is in no way connected to presseportal.de, 'news aktuell' or dpa. 
+PyPresseportal is independently developed by volunteers as an Open Source 
 library.
 
 An API key from presseportal.de is required to access data. You can find more
@@ -59,7 +63,7 @@ using your API key:
 ******************
 
 Next, request data from the API through the ``PresseportalApi`` class. It
-contains several methods to access API data, all of which work very similarly.
+contains several methods to access API data, all of which work similarly.
 
 The easiest way to access the most recently published stories is the 
 ``get_stories()`` method. If you do not provide any arguments to this method, 
