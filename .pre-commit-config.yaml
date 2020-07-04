@@ -7,9 +7,28 @@ repos:
     -   id: trailing-whitespace
     -   id: end-of-file-fixer
     -   id: check-yaml
+    -   id: check-json
     -   id: check-added-large-files
+    -   id: check-case-conflict
+    -   id: check-merge-conflict
+    -   id: check-docstring-first
 
 -   repo: https://github.com/pycqa/pydocstyle
     rev: 5.0.2  # pick a git hash / tag to point to
     hooks:
     -   id: pydocstyle
+
+-   repo: https://github.com/pre-commit/pygrep-hooks
+    rev: v1.5.1  # pick a git hash / tag to point to
+    hooks:
+    -   id: rst-backticks
+
+-   repo: https://github.com/amperser/proselint
+    rev: 0.10.2
+    hooks:
+    -   id: proselint
+
+-   repo: https://github.com/Lucas-C/pre-commit-hooks-markup
+    rev: v1.0.0
+    hooks:
+    - id: rst-linter

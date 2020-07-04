@@ -16,7 +16,7 @@ PyPresseportal
 A Python interface into the `presseportal.de <htps://www.presseportal.de>`_ API.
 
 The website presseportal.de is a service provided by 'news aktuell', owned by dpa
-(Deutsche Presse Agentur). It is one of the biggest distributors of press releases
+(Deutsche Presse Agentur). It is one of the largest distributors of press releases
 and investor relations announcements in Germany. For example, almost all police and fire
 departments use this service to distribute their press releases.
 
