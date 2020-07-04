@@ -1,4 +1,4 @@
-"""PyPresseportal - Python wrapper for the presseportal.de API
+"""PyPresseportal - Python wrapper for the presseportal.de API.
 
 PyPresseportal makes data from the presseportal.de API
 accessible as Python objects. You need an API key from
@@ -36,7 +36,7 @@ from pypresseportal.pypresseportal_errors import (
 
 
 class Company:
-    """ Represents information about a company.
+    """Represents information about a company.
 
     A ``Company`` object can have the following attributes:
     ``id``, ``url``, ``name``, ``isin`` (optional), ``wkn`` (optional), ``shortname``, ``rss``, ``logo``, ``web``, and ``homepage``.
@@ -44,6 +44,7 @@ class Company:
     """
 
     def __init__(self, data: dict):
+        """Constructor method."""
         self.data = data
         data_keys = self.data.keys()
         required_keys = ("id", "url", "name")
@@ -62,13 +63,14 @@ class Company:
 
 class Entity:
     """Represents a company or a public service office search result.
-    
+
     An ``Entity`` object can have the following attributes:
     ``id``, ``url``, ``name``, and ``type`` (company or office).
     See original API documentation for details (https://api.presseportal.de/doc/format/result).
     """
 
     def __init__(self, data: dict):
+        """Constructor method."""
         self.data = data
         data_keys = self.data.keys()
         required_keys = ("id", "url", "name", "type")
@@ -83,7 +85,7 @@ class Entity:
 
 
 class Office:
-    """ Represents information about a public service office.
+    """Represents information about a public service office.
 
     An ``Office`` object can have the following attributes:
     ``id``, ``url``, ``name``, ``shortname``, ``rss``, ``logo``, ``web``, and ``homepage``.
@@ -91,6 +93,7 @@ class Office:
     """
 
     def __init__(self, data: dict):
+        """Constructor method."""
         self.data = data
         data_keys = self.data.keys()
         required_keys = ("id", "url", "name")
@@ -206,11 +209,11 @@ class PresseportalApi:
     >>> api_object = PresseportalApi(YOUR_API_KEY)
 
     Next, request data from the API, using the various methods in this class.
-    
+
     For example:
 
     Use the method get_stories() to access the most recently published stories (https://api.presseportal.de/doc/article/all).
-    If no arguments are provided, PyPresseportal defaults to retrieving the 50 most 
+    If no arguments are provided, PyPresseportal defaults to retrieving the 50 most
     recent stories available. For example:
 
         >>> stories = api_object.get_stories()
@@ -224,15 +227,14 @@ class PresseportalApi:
     """
 
     def __init__(self, api_key: str):
-        """Constructor method.
-        """
+        """Constructor method."""
         self.data_format = "json"
         if type(api_key) is str and len(api_key) > 5:
             self.api_key = api_key
         else:
             raise ApiKeyError(api_key)
 
-    def build_request(
+    def _build_request(
         self,
         base_url: str,
         media: Union[str, None] = None,
@@ -267,7 +269,7 @@ class PresseportalApi:
 
         return url, params, headers
 
-    def get_data(self, url: str, params: dict, headers: dict) -> dict:
+    def _get_data(self, url: str, params: dict, headers: dict) -> dict:
         #######################Disable for testing ##############
         try:
             request = requests.get(url=url, params=params, headers=headers)
@@ -298,7 +300,7 @@ class PresseportalApi:
 
         return json_data
 
-    def is_media_valid(
+    def _is_media_valid(
         self, media: Union[str, None], allowed_media_type: tuple = MEDIA_TYPES
     ) -> bool:
 
@@ -307,14 +309,14 @@ class PresseportalApi:
             return False
         return True
 
-    def parse_story_data(self, json_data: dict) -> List[Story]:
+    def _parse_story_data(self, json_data: dict) -> List[Story]:
         stories_list = []
         for item in json_data["content"]["story"]:
             stories_list.append(Story(item))
 
         return stories_list
 
-    def parse_search_results(self, json_data: dict) -> Union[List[Entity], None]:
+    def _parse_search_results(self, json_data: dict) -> Union[List[Entity], None]:
         if "content" in json_data:
             search_results_list = []
             for item in json_data["content"]["result"]:
@@ -344,16 +346,17 @@ class PresseportalApi:
         Returns:
             List[Story]: List of Story objects
         """
-
-        if not self.is_media_valid(media, PUBLIC_SERVICE_MEDIA_TYPES):
+        if not self._is_media_valid(media, PUBLIC_SERVICE_MEDIA_TYPES):
             return []
         # Set up query components
         base_url = "https://api.presseportal.de/api/article/publicservice"
-        url, params, headers = self.build_request(base_url, media, start, limit, teaser)
+        url, params, headers = self._build_request(
+            base_url, media, start, limit, teaser
+        )
 
         # Query API and map results
-        json_data = self.get_data(url=url, params=params, headers=headers)
-        return self.parse_story_data(json_data)
+        json_data = self._get_data(url=url, params=params, headers=headers)
+        return self._parse_story_data(json_data)
 
     def get_public_service_specific_office(
         self,
@@ -382,20 +385,20 @@ class PresseportalApi:
         Returns:
             List[Story]: List of Story objects
         """
-        if self.is_media_valid(media, PUBLIC_SERVICE_MEDIA_TYPES):
+        if self._is_media_valid(media, PUBLIC_SERVICE_MEDIA_TYPES):
             # Set up query components
             if type(id) is not str:
                 id = str(id)
             base_url = (
                 f"https://api.presseportal.de/api/article/publicservice/office/{id}"
             )
-            url, params, headers = self.build_request(
+            url, params, headers = self._build_request(
                 base_url, media, start, limit, teaser
             )
 
             # Query API and map results
-            json_data = self.get_data(url=url, params=params, headers=headers)
-            stories_list = self.parse_story_data(json_data)
+            json_data = self._get_data(url=url, params=params, headers=headers)
+            stories_list = self._parse_story_data(json_data)
         else:
             stories_list = []
 
@@ -414,7 +417,7 @@ class PresseportalApi:
         Returns a list of :class:`pypresseportal.Story` objects. List of region codes and more information: https://api.presseportal.de/doc/article/publicservice/region.
 
         Args:
-            region_code (str): Only request stories located in this specific region. 
+            region_code (str): Only request stories located in this specific region.
             media (str, optional): Only request stories containing this specific media type (``image`` or ``document``). Defaults to None.
             start (int, optional): Start/offset of the result article list. Defaults to 0.
             limit (int, optional): Limit number of articles in response (API maximum is 50). Defaults to 50.
@@ -433,16 +436,16 @@ class PresseportalApi:
         if region_code not in PUBLIC_SERVICE_REGIONS:
             raise RegionError(region_code, PUBLIC_SERVICE_REGIONS)
 
-        if self.is_media_valid(media, PUBLIC_SERVICE_MEDIA_TYPES):
+        if self._is_media_valid(media, PUBLIC_SERVICE_MEDIA_TYPES):
             # Set up query components
             base_url = f"https://api.presseportal.de/api/article/publicservice/region/{region_code}"
-            url, params, headers = self.build_request(
+            url, params, headers = self._build_request(
                 base_url, media, start, limit, teaser
             )
 
             # Query API and map results
-            json_data = self.get_data(url=url, params=params, headers=headers)
-            stories_list = self.parse_story_data(json_data)
+            json_data = self._get_data(url=url, params=params, headers=headers)
+            stories_list = self._parse_story_data(json_data)
         else:
             stories_list = []
 
@@ -469,15 +472,15 @@ class PresseportalApi:
         Returns:
             List[Story]: List of Story objects
         """
-        if self.is_media_valid(media):
+        if self._is_media_valid(media):
             # Set up query components
             base_url = "https://api.presseportal.de/api/article/all"
-            url, params, headers = self.build_request(
+            url, params, headers = self._build_request(
                 base_url, media, start, limit, teaser
             )
             # Query API and map results
-            json_data = self.get_data(url=url, params=params, headers=headers)
-            stories_list = self.parse_story_data(json_data)
+            json_data = self._get_data(url=url, params=params, headers=headers)
+            stories_list = self._parse_story_data(json_data)
         else:
             stories_list = []
 
@@ -510,18 +513,18 @@ class PresseportalApi:
         Returns:
             List[Story]: List of Story objects
         """
-        if self.is_media_valid(media):
+        if self._is_media_valid(media):
             # Set up query components
             if type(id) is not str:
                 id = str(id)
             base_url = f"https://api.presseportal.de/api/article/company/{id}"
-            url, params, headers = self.build_request(
+            url, params, headers = self._build_request(
                 base_url, media, start, limit, teaser
             )
 
             # Query API and map results
-            json_data = self.get_data(url=url, params=params, headers=headers)
-            stories_list = self.parse_story_data(json_data)
+            json_data = self._get_data(url=url, params=params, headers=headers)
+            stories_list = self._parse_story_data(json_data)
         else:
             stories_list = []
 
@@ -536,7 +539,7 @@ class PresseportalApi:
         teaser: bool = False,
     ) -> List[Story]:
         """Queries API for most recent press releases assigned to a specific topic.
-        
+
         Returns a list of :class:`pypresseportal.Story` objects. More information: https://api.presseportal.de/doc/article/topic/ident
 
         Args:
@@ -559,16 +562,16 @@ class PresseportalApi:
         if topic not in TOPICS:
             raise TopicError(topic, TOPICS)
 
-        if self.is_media_valid(media):
+        if self._is_media_valid(media):
             # Set up query components
             base_url = f"https://api.presseportal.de/api/article/topic/{topic}"
-            url, params, headers = self.build_request(
+            url, params, headers = self._build_request(
                 base_url, media, start, limit, teaser
             )
 
             # Query API and map results
-            json_data = self.get_data(url=url, params=params, headers=headers)
-            stories_list = self.parse_story_data(json_data)
+            json_data = self._get_data(url=url, params=params, headers=headers)
+            stories_list = self._parse_story_data(json_data)
         else:
             stories_list = []
 
@@ -610,16 +613,16 @@ class PresseportalApi:
         # Construct keyword string
         keywords_str = ",".join(keywords)
 
-        if self.is_media_valid(media):
+        if self._is_media_valid(media):
             # Set up query components
             base_url = f"https://api.presseportal.de/api/article/keyword/{keywords_str}"
-            url, params, headers = self.build_request(
+            url, params, headers = self._build_request(
                 base_url, media, start, limit, teaser
             )
 
             # Query API and map results
-            json_data = self.get_data(url=url, params=params, headers=headers)
-            stories_list = self.parse_story_data(json_data)
+            json_data = self._get_data(url=url, params=params, headers=headers)
+            stories_list = self._parse_story_data(json_data)
         else:
             stories_list = []
 
@@ -650,20 +653,19 @@ class PresseportalApi:
         Returns:
             List[Story]: List of Story objects
         """
-
         # Check if investor relations news type is supported by API
         if news_type.lower() not in INVESTOR_RELATIONS_NEWS_TYPES:
             raise NewsTypeError(news_type, INVESTOR_RELATIONS_NEWS_TYPES)
 
         # Set up query components
         base_url = f"https://api.presseportal.de/api/ir/{news_type.lower()}"
-        url, params, headers = self.build_request(
+        url, params, headers = self._build_request(
             base_url=base_url, media=None, start=start, limit=limit, teaser=teaser
         )
 
         # Query API and map results
-        json_data = self.get_data(url=url, params=params, headers=headers)
-        stories_list = self.parse_story_data(json_data)
+        json_data = self._get_data(url=url, params=params, headers=headers)
+        stories_list = self._parse_story_data(json_data)
 
         return stories_list
 
@@ -694,7 +696,6 @@ class PresseportalApi:
         Returns:
             List[Story]: List of Story objects
         """
-
         # Check if investor relations news type is supported by API
         if news_type.lower() not in INVESTOR_RELATIONS_NEWS_TYPES:
             raise NewsTypeError(news_type, INVESTOR_RELATIONS_NEWS_TYPES)
@@ -705,13 +706,13 @@ class PresseportalApi:
         base_url = (
             f"https://api.presseportal.de/api/ir/company/{id}/{news_type.lower()}"
         )
-        url, params, headers = self.build_request(
+        url, params, headers = self._build_request(
             base_url=base_url, media=None, start=start, limit=limit, teaser=teaser
         )
 
         # Query API and map results
-        json_data = self.get_data(url=url, params=params, headers=headers)
-        stories_list = self.parse_story_data(json_data)
+        json_data = self._get_data(url=url, params=params, headers=headers)
+        stories_list = self._parse_story_data(json_data)
 
         return stories_list
 
@@ -739,7 +740,6 @@ class PresseportalApi:
         Returns:
             Union[List[Entity], None]: List of Entity objects. None if nothing found.
         """
-
         # Check search term
         if isinstance(search_term, list):
             search_term = ",".join(search_term).lower()
@@ -757,7 +757,7 @@ class PresseportalApi:
             raise SearchEntityError(entity)
 
         # Set up query components
-        url, params, headers = self.build_request(
+        url, params, headers = self._build_request(
             base_url=base_url,
             media=None,
             start=None,
@@ -767,8 +767,8 @@ class PresseportalApi:
         )
 
         # Query API and map results
-        json_data = self.get_data(url=url, params=params, headers=headers)
-        search_results_list = self.parse_search_results(json_data)
+        json_data = self._get_data(url=url, params=params, headers=headers)
+        search_results_list = self._parse_search_results(json_data)
 
         return search_results_list
 
@@ -787,17 +787,16 @@ class PresseportalApi:
         Returns:
             Company: An object containing details about the requested company.
         """
-
         # Check id and define base_url
         if type(id) is not str:
             id = str(id)
         base_url = f"https://api.presseportal.de/api/info/company/{id}"
 
         # Set up query components
-        url, params, headers = self.build_request(base_url=base_url)
+        url, params, headers = self._build_request(base_url=base_url)
 
         # Query API and map results
-        json_data = self.get_data(url=url, params=params, headers=headers)
+        json_data = self._get_data(url=url, params=params, headers=headers)
         company_info = Company(json_data["company"])
 
         return company_info
@@ -817,17 +816,16 @@ class PresseportalApi:
         Returns:
             Office: An object containing details about the requested office.
         """
-
         # Check id and define base_url
         if type(id) is not str:
             id = str(id)
         base_url = f"https://api.presseportal.de/api/info/office/{id}"
 
         # Set up query components
-        url, params, headers = self.build_request(base_url=base_url)
+        url, params, headers = self._build_request(base_url=base_url)
 
         # Query API and map results
-        json_data = self.get_data(url=url, params=params, headers=headers)
+        json_data = self._get_data(url=url, params=params, headers=headers)
         office_info = Office(json_data["office"])
 
         return office_info

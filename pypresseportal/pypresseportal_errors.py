@@ -1,5 +1,4 @@
-"""Error handling for PyPresseportal
-"""
+"""Error handling for PyPresseportal."""
 
 from typing import Union
 
@@ -66,7 +65,7 @@ class ApiConnectionFail(Exception):
 
 
 class MediaError(Exception):
-    """Raised if media type is not supported. List of media types: `<https://api.presseportal.de/en/doc/value/media>`_
+    """Raised if media type is not supported. List of media types: `<https://api.presseportal.de/en/doc/value/media>`_.
 
     Args:
         media (str): Unsupported media type.
@@ -79,7 +78,7 @@ class MediaError(Exception):
 
 
 class RegionError(Exception):
-    """Raised if region is not supported. List of regions: `<https://api.presseportal.de/en/doc/value/region>`_
+    """Raised if region is not supported. List of regions: `<https://api.presseportal.de/en/doc/value/region>`_.
 
     Args:
         region (str): Unsupported region.
@@ -94,7 +93,7 @@ class RegionError(Exception):
 
 
 class TopicError(Exception):
-    """Raised if topic is not supported. List of topics: `<https://api.presseportal.de/en/doc/value/topic>`_
+    """Raised if topic is not supported. List of topics: `<https://api.presseportal.de/en/doc/value/topic>`_.
 
     Args:
         topic (str): Unsupported topic.
@@ -109,7 +108,7 @@ class TopicError(Exception):
 
 
 class KeywordError(Exception):
-    """Raised if keyword is not supported. List of keywords: `<https://api.presseportal.de/en/doc/value/keyword>`_
+    """Raised if keyword is not supported. List of keywords: `<https://api.presseportal.de/en/doc/value/keyword>`_.
 
     Args:
         keyword (str): Unsupported keyword.
@@ -124,7 +123,7 @@ class KeywordError(Exception):
 
 
 class NewsTypeError(Exception):
-    """Raised if investor relations news type is not supported. List of news types: `<https://api.presseportal.de/en/doc/value/ir_type>`_
+    """Raised if investor relations news type is not supported. List of news types: `<https://api.presseportal.de/en/doc/value/ir_type>`_.
 
     Args:
         news_type (str): Unsupported investor relations news type.

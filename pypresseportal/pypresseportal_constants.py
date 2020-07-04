@@ -1,5 +1,4 @@
-""" Constants for pypresseportal
-"""
+"""Constants for pypresseportal."""
 
 MEDIA_TYPES = ("image", "document", "audio", "video")
 PUBLIC_SERVICE_MEDIA_TYPES = ("image", "document")
