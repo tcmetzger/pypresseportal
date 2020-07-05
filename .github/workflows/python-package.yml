@@ -29,13 +29,17 @@ jobs:
         if [ -f requirements/test_requirements.txt ]; then pip install -r requirements/test_requirements.txt; fi
         pip install mypy
         pip install proselint
+        pip install pydocstyle
         pip install -e .
     - name: Check types with mypy
       run: |
         mypy -p pypresseportal
-    - name: Test with pytest
-      run: |
-        pytest
+    # - name: Test with pytest
+    #   run: |
+    #     pytest
     - name: Check text with proselint
       run: |
         proselint docs/*rst
+    - name: Check docstrings with pydocstyle
+      run: |
+        pydocstyle -v pypresseportal/*.py
