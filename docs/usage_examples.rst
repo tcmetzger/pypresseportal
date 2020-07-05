@@ -6,25 +6,25 @@ Usage examples
 ==============
 
 The following examples give you an idea of what can be done with PyPresseportal,
-featuring some of the functionalities of the library. However, PyPresseportal has 
+featuring some of the functionalities of the library. However, PyPresseportal has
 several additional functions that are not part of these examples. You can find more
 information about all available classes, methods, and attributes in the :doc:`pypresseportal`.
 
 Police and fire department press releases from a specific state
 ---------------------------------------------------------------
 
-Use the ``get_public_service_specific_region()`` method to request press releases from public 
-service offices in a specific region. 
+Use the ``get_public_service_specific_region()`` method to request press releases from public
+service offices in a specific region.
 
 First, this method requires a ``region_code`` argument, as defined
-in this list: `<https://api.presseportal.de/en/doc/value/region>`_. For example, ``"by"`` is the 
+in this list: `<https://api.presseportal.de/en/doc/value/region>`_. For example, ``"by"`` is the
 region code for Bavaria:
 
 >>> from pypresseportal import PresseportalApi
 >>> api_object = PresseportalApi(YOUR_API_KEY)
 >>> bavaria_stories = api_object.get_public_service_specific_region(region_code="by", limit=20)
 
-Note that this example also includes the optional argument ``limit=20``, which limits the 
+Note that this example also includes the optional argument ``limit=20``, which limits the
 response to the 20 most recently published stories:
 
 >>> len(bavaria_stories)
@@ -38,9 +38,9 @@ Iterate over the list to extract some of the attributes of each Story object:
 POL-MFR: (797) Warnung vor "falschen Polizeibeamten"
 Nürnberg (ots)
 In den letzten Tagen registrierte die mittelfränkische Polizei zahlreiche Hinweise
-(...)
+(…)
 
-The :doc:`pypresseportal` contains more information about all possible attributes 
+The :doc:`pypresseportal` contains more information about all possible attributes
 a Story object can have: :class:`pypresseportal.Story`
 
 Press releases with images
@@ -54,7 +54,7 @@ This code requests the 10 most recent news stories featuring an image, by passin
 >>> api_object = PresseportalApi(YOUR_API_KEY)
 >>> stories_with_image = api_object.get_stories(media="image", limit=10)
 
-Read the relevant attributes for each story, such as ``.image`` which contains json data 
+Read the relevant attributes for each story, such as ``.image`` which contains json data
 about image media files that are part of the story:
 
 >>> for story in stories_with_image:
@@ -91,7 +91,7 @@ Next, store the offices' ``.id`` attributes in a list:
 >>> for data in search_results:
 >>>     local_office_ids.append(data.id)
 
-Finally, use ``get_public_service_specific_office()`` to access the 
+Finally, use ``get_public_service_specific_office()`` to access the
 most recent press releases of those three offices:
 
 >>> for office in local_office_ids:
@@ -101,7 +101,7 @@ most recent press releases of those three offices:
 >>>         print(story.body)
 POL-DO: Mehrere Fahrzeuge in Dortmund-Dorstfeld beschädigt - Polizei sucht Zeugen
 Dortmund (ots) - Lfd. Nr.: 0628
-(...)
+(…)
 
 Instead of ``get_public_service_specific_office()``, you can use ``get_stories_specific_company()`` to
 access press releases of a specific company, or ``get_investor_relations_news_company()`` to access
@@ -121,7 +121,7 @@ database for any results matching the company you are looking for. For example t
 >>> search_results = api_object.get_entity_search_results(search_term=["ARD"], entity="company")
 
 Next, inspect the search results. ``get_entity_search_results()`` returns a list of all
-companies matching your search string. Note that ``get_entity_search_results()`` will return 
+companies matching your search string. Note that ``get_entity_search_results()`` will return
 ``None`` if the API did not find any matching entries, so make sure to check first:
 
 >>> if search_results:  # Check if search yielded any results
@@ -132,9 +132,9 @@ companies matching your search string. Note that ``get_entity_search_results()``
 29876 ARD Presse
 64887 ARDEX GmbH
 73846 ARD Das Erste / ZDF
-(...)
+(…)
 
-Finally, pick the id of the company you were looking for and pass it to 
+Finally, pick the id of the company you were looking for and pass it to
 ``get_stories_specific_company()``, using the attribute ``id`` :
 
 >>> company_stories = api_object.get_stories_specific_company(id=search_results[0].id)
@@ -143,7 +143,7 @@ Finally, pick the id of the company you were looking for and pass it to
 >>>     print(story.body)
 Das Erste / "Wenn Frauen Austern essen" - der erste Gewinner des "Tatort"-Votings zum 50-jährigen Jubiläum der Krimireihe (FOTO)
 München (ots) - 143.997 Zuschauerinnen und Zuschauer aus Deutschland und Österreich beteiligten sich an der ersten Abstimmungsrunde des Sommer-Events.
-(...)
+(…)
 
 Investor relations announcements from a specific company
 --------------------------------------------------------
@@ -160,7 +160,7 @@ database for any results matching the company you are looking for. For example t
 >>> search_results = api_object.get_entity_search_results(search_term=["Fraport"], entity="company")
 
 Next, inspect the search results. ``get_entity_search_results()`` returns a list of all
-companies matching your search string. Note that ``get_entity_search_results()`` will return 
+companies matching your search string. Note that ``get_entity_search_results()`` will return
 ``None`` if the API did not find any matching entries, so make sure to check first:
 
 >>> if search_results:  # Check if search yielded any results
@@ -170,7 +170,7 @@ companies matching your search string. Note that ``get_entity_search_results()``
 
 Optionally, you can now use the method ``get_company_information()`` to query the API
 for more information about the company, such as `WKN <https://en.wikipedia.org/wiki/Wertpapierkennnummer>`_,
-`ISIN <https://en.wikipedia.org/wiki/International_Securities_Identification_Number>`_ or the 
+`ISIN <https://en.wikipedia.org/wiki/International_Securities_Identification_Number>`_ or the
 company's RSS feed:
 
 >>> company_info = api_object.get_company_information(id=search_results[0].id)
@@ -191,5 +191,5 @@ acquired above to access the company's most recent investor relations press rele
 EANS-Hinweisbekanntmachung: Fraport AG Frankfurt Airport Services Worldwide /
 Bekanntmachung gemäß § 37v, 37w, 37x ff. WpHG mit dem Ziel der europaweiten
 Verbreitung
-Hiermit gibt die Fraport AG Frankfurt Airport Services Worldwide bekannt, 
-(...)
+Hiermit gibt die Fraport AG Frankfurt Airport Services Worldwide bekannt,
+(…)
