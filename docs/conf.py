@@ -1,5 +1,5 @@
-# Configuration file for the Sphinx documentation builder.
-#
+"""Configuration file for the Sphinx documentation builder."""
+
 # This file only contains a selection of the most common options. For a full
 # list see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
@@ -42,6 +42,7 @@ master_doc = "index"
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
+    "sphinxcontrib.spelling",
     "ogtag",
 ]
 
@@ -53,6 +54,13 @@ templates_path = ["_templates"]
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
+# -- Options for spell checking ----------------------------------------------
+# source: https://sphinxcontrib-spelling.readthedocs.io/en/latest/customize.html
+spelling_lang = "en_US"
+tokenizer_lang = "en_US"
+spelling_word_list_filename = "spelling_wordlist.txt"
+spelling_show_suggestions = False
+# spelling_filters=[]  # https://github.com/pyenchant/pyenchant/blob/master/website/content/tutorial.rst
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -61,7 +69,7 @@ og_site_url = "https://pypresseportal.readthedocs.io/en/latest/"
 og_twitter_site = "@tcmetzger"
 og_fallback_image = "https://www.tcmetzger.de/STATIC/pypresseportal_default.png"
 
-# The theme to use for HTML and HTML Help pages.  See the documentation for
+# The theme to use for HTML and HTML Help pages. See the documentation for
 # a list of builtin themes.
 #
 html_theme = "sphinx_rtd_theme"
