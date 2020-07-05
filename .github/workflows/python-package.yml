@@ -30,6 +30,8 @@ jobs:
         pip install mypy
         pip install proselint
         pip install pydocstyle
+        pip install sphinx
+        pip install sphinxcontrib-spelling
         pip install -e .
     - name: Check types with mypy
       run: |
@@ -43,5 +45,7 @@ jobs:
     - name: Check docstrings with pydocstyle
       run: |
         pydocstyle -v pypresseportal/*.py
-    - name: Check spelling
-      uses: check-spelling/check-spelling@0.0.16-alpha
+    - name: Check spelling in docs
+      run: |
+        sudo apt-get install enchant
+        cd docs && make spelling && cd ..

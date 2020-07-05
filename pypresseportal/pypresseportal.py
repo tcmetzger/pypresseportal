@@ -802,7 +802,7 @@ class PresseportalApi:
         return company_info
 
     def get_public_service_office_information(self, id: str) -> Office:
-        """Queries API for detailed information about a specific public service office (police or fire deparment, etc.).
+        """Queries API for detailed information about a specific public service office (police or fire department, etc.).
 
         Returns a :class:`pypresseportal.Office` object. More information: https://api.presseportal.de/doc/info/office/id
 

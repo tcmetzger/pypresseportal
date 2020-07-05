@@ -1,0 +1,12 @@
+presseportal
+dpa
+de
+aktuell
+Hoc
+Deutsche
+Presse
+Agentur
+Api
+fulltext
+pypresseportal
+Fraport
