@@ -43,3 +43,5 @@ jobs:
     - name: Check docstrings with pydocstyle
       run: |
         pydocstyle -v pypresseportal/*.py
+    - name: Check spelling
+      uses: check-spelling/check-spelling@0.0.16-alpha
