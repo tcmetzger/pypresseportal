@@ -26,10 +26,10 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
+        if [ -f requirements/test_requirements.txt ]; then pip install -r requirements/test_requirements.txt; fi
         pip install mypy
         pip install proselint
         pip install -e .
-        if [ -f requirements/test_requirements.txt ]; then pip install -r requirements/test_requirements.txt; fi
     - name: Check types with mypy
       run: |
         mypy -p pypresseportal
