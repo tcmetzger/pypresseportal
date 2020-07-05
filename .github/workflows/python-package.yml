@@ -4,10 +4,10 @@
 name: Check docs
 
 on:
-  push:
+  # push:
     # branches: [ master ]
   pull_request:
-    # branches: [ master ]
+    branches: [ master ]
 
 jobs:
   build:
@@ -32,7 +32,7 @@ jobs:
         pip install pydocstyle
         pip install sphinx
         pip install sphinxcontrib-spelling
-        pip install -e .
+        # pip install -e .
     - name: Check types with mypy
       run: |
         mypy -p pypresseportal
